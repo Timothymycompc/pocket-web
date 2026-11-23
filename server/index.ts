@@ -10,7 +10,8 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { loadSecrets } from "./secrets.js";
 import { llmRoutes, DEFAULT_MODEL } from "./llm.js";
-import { buildDirectory, pocketNetwork, POCKET_NETWORK, type Directory } from "./directory.js";
+import { buildDirectory, pocketNetwork, POCKET_NETWORK, LIST_URL, liveFetch, type Directory } from "./directory.js";
+import { readLatestCheck } from "./status.js";
 
 const here = path.dirname(fileURLToPath(import.meta.url));
 const WEB = process.env.POCKET_WEB_DIR || path.resolve(here, "../web");
@@ -75,7 +76,7 @@ export function looksBroken(next: Directory, prev: Directory | null): boolean {
 
 /** Keeps the latest good directory in memory. A failed or suspect refresh keeps the previous one
  *  and tries again in 10 minutes (on Cloud Run a paused CPU makes every site time out at once). */
-export function directoryStore(build: () => Promise<Directory> = () => buildDirectory(), retryMs = 600_000): DirectoryStore {
+export function directoryStore(build: () => Promise<Directory> = () => buildDirectory(liveFetch, LIST_URL, () => readLatestCheck()), retryMs = 600_000): DirectoryStore {
   let current: Directory | null = null;
   let running: Promise<void> | null = null;
   const store: DirectoryStore = {

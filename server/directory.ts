@@ -10,6 +10,7 @@
 // agent whose tools are the listed sites' network URLs. That file is data only.
 // @ts-ignore: plain JS module shared with the browser runtime
 import { AgentNetwork, validateNetwork } from "../web/runtime/kernel.js";
+import { checksBySite, type CheckFile, type SiteCheck } from "./status.js";
 
 export const LIST_URL = "https://raw.githubusercontent.com/cognizant-ai-labs/agentic-web/main/docs/agentic_websites.md";
 export const LIST_PAGE = "https://github.com/cognizant-ai-labs/agentic-web/blob/main/docs/agentic_websites.md";
@@ -32,6 +33,7 @@ export type Site = {
   loadable: boolean;       // manifest + network load cross-origin and the network validates
   problems: string[];      // plain reasons when not loadable
   listedOrder: number;     // position on the public list (newest entries are usually last)
+  check?: SiteCheck;       // what the latest daily live check found (server/status.ts)
 };
 
 export type Directory = { updatedAt: string; source: string; sites: Site[] };
@@ -130,7 +132,7 @@ export function toolNameFor(peerUrl: string): string {
   return path.replace(/[^A-Za-z0-9_]/g, "_").replace(/^_+/, "").slice(0, 60) || "tool";
 }
 
-export async function buildDirectory(get: Fetcher = liveFetch, listUrl = LIST_URL): Promise<Directory> {
+export async function buildDirectory(get: Fetcher = liveFetch, listUrl = LIST_URL, readChecks: () => Promise<CheckFile | null> = async () => null): Promise<Directory> {
   const list = await get(listUrl);
   if (list.status !== 200) throw new Error(`public list answered HTTP ${list.status}`);
   const rows = parseList(list.text);
@@ -149,6 +151,8 @@ export async function buildDirectory(get: Fetcher = liveFetch, listUrl = LIST_UR
     if (other) { s.loadable = false; s.problems.push(`its network path gives the same tool name as ${other}; a different network name fixes it`); }
     else seen.set(s.toolName, s.name);
   }
+  const checks = checksBySite(await readChecks().catch(() => null), new Map(sites.filter((s) => s.loadable).map((s) => [s.peerUrl, s.toolName])));
+  for (const s of sites) { const c = checks.get(s.peerUrl); if (c) s.check = c; }
   return { updatedAt: new Date().toISOString(), source: LIST_PAGE, sites };
 }
 
@@ -158,7 +162,8 @@ export const POCKET_NETWORK = "pocket_web";
 
 function helperLine(s: Site): string {
   const examples = s.sampleQueries.slice(0, 2).map((q) => `"${q.slice(0, 160)}"`).join("; ");
-  return `- ${s.name} (tool: ${s.toolName}; ${s.category === "builders" ? "for builders" : "for everyone"}): ${s.description}${examples ? ` Example requests: ${examples}` : ""}`;
+  const checked = s.check?.result === "no-answer" ? "; did not answer in the latest daily check" : "";
+  return `- ${s.name} (tool: ${s.toolName}; ${s.category === "builders" ? "for builders" : "for everyone"}${checked}): ${s.description}${examples ? ` Example requests: ${examples}` : ""}`;
 }
 
 /** The data-only network file: one front agent that hands each request to a listed site. */

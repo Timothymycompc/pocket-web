@@ -71,12 +71,26 @@ async function ask(text, send = false) {
 }
 
 // ---- Directory ----------------------------------------------------------------------
+function dayWord(iso) {
+  const d = new Date(iso), now = new Date();
+  const days = Math.round((new Date(now.toDateString()) - new Date(d.toDateString())) / 86400000);
+  return days === 0 ? "today" : days === 1 ? "yesterday" : d.toLocaleDateString([], { month: "short", day: "numeric" });
+}
+// What the daily live check found: a real question from the site's own examples, asked through Pocket Web.
+function checkBadge(s) {
+  if (!s.loadable) return null;
+  if (!s.check) return el("span", { class: "check none", title: "The daily live check hasn't asked this site yet." }, "Not checked yet");
+  const ok = s.check.result === "answered";
+  return el("span", { class: "check " + (ok ? "ok" : "bad"), title: s.check.note },
+    (ok ? "Answered " : "Didn't answer ") + dayWord(s.check.checkedAt));
+}
 function siteCard(s, { example = true, problems = false } = {}) {
   const q = s.sampleQueries?.[0];
   return el("article", { class: "card" },
     el("div", { class: "card-head" },
       el("h3", {}, s.name),
       s.team ? el("span", { class: "team" }, "by " + s.team) : null),
+    checkBadge(s),
     el("p", {}, s.description),
     problems && s.problems?.length ? el("ul", { class: "problems" }, s.problems.map((p) => el("li", {}, p))) : null,
     el("div", { class: "card-actions" },

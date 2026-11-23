@@ -78,7 +78,16 @@ h2{font-size:19px;margin:28px 0 4px}
 .ns-msg{max-width:100%;overflow-wrap:anywhere}
 .ns-inputbar input{background:var(--raised)!important;color:var(--text)!important;border-color:var(--line2)!important;font-size:16px!important}
 .ns-inputbar button{color:#17120a!important}
-@media (max-width:820px){.ns-agents,.ns-dev{display:none!important}}
+.ns-header .ns-title{display:none}
+.ns-header{flex-wrap:wrap;min-width:0}
+.ns-header>*{min-width:0;max-width:100%}
+.ns-header [class*="badge"],.ns-header [class*="pill"]{white-space:normal!important;overflow-wrap:anywhere}
+/* Phone: one column, chat only. The agent graph and developer view stay on wider screens. */
+@media (max-width:820px){
+  .ns-app{grid-template-columns:minmax(0,1fr)!important;padding:8px!important;overflow-x:hidden!important}
+  .ns-split,.ns-agents,.ns-dev{display:none!important}
+  .ns-main{grid-column:1!important}
+}
 
 /* Builders */
 .howto{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:4px 16px 12px}
@@ -94,3 +103,12 @@ h2{font-size:19px;margin:28px 0 4px}
 
 .foot{max-width:880px;margin:30px auto 10px;padding:0 16px;color:var(--dim2);font-size:12px}
 body[data-view="ask"] .foot{display:none}
+/* The runtime's "website actions connected" line is about this page's own actions; Pocket Web has none,
+   and peer sites' actions are reported in their answers. Hidden so it isn't misread as a failure. */
+.ns-action-status{display:none!important}
+
+/* Daily live check badge */
+.check{align-self:flex-start;font:600 11px/1 "JetBrains Mono",monospace;padding:4px 8px;border-radius:999px;border:1px solid var(--line2);color:var(--dim)}
+.check.ok{color:#7be0b8;border-color:#1f6b52;background:rgba(16,185,129,.08)}
+.check.ok::before{content:"";display:inline-block;width:6px;height:6px;border-radius:50%;background:#10b981;margin-right:6px;vertical-align:1px;animation:blink 2.4s infinite}
+.check.bad{color:#f0b37a;border-color:#6b4a1f;background:rgba(245,158,11,.08)}

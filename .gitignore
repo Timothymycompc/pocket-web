@@ -1,3 +1,4 @@
 node_modules/
 dist/
 data/*.log
+jobs/peer-check/peer-check.mjs

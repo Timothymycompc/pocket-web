@@ -38,11 +38,19 @@ export type Directory = { updatedAt: string; source: string; sites: Site[] };
 
 type Fetcher = (url: string) => Promise<{ status: number; cors: boolean; text: string }>;
 
-export const liveFetch: Fetcher = async (url) => {
-  const res = await fetch(url, { headers: { Origin: CALLER_ORIGIN }, redirect: "follow", signal: AbortSignal.timeout(15000) });
+/** Rejects when a step takes longer than ms, so one slow site can never stall the directory. */
+export function withTimeout<T>(p: Promise<T>, ms: number, what: string): Promise<T> {
+  let timer: ReturnType<typeof setTimeout>;
+  return Promise.race([p, new Promise<T>((_, no) => { timer = setTimeout(() => no(new Error(`${what} took over ${ms / 1000} s`)), ms); })])
+    .finally(() => clearTimeout(timer));
+}
+
+export const liveFetch: Fetcher = (url) => withTimeout((async () => {
+  const ctl = new AbortController();
+  const res = await fetch(url, { headers: { Origin: CALLER_ORIGIN }, redirect: "follow", signal: ctl.signal });
   const acao = res.headers.get("access-control-allow-origin");
   return { status: res.status, cors: acao === "*" || acao === CALLER_ORIGIN, text: await res.text() };
-};
+})(), 15000, "the request");
 
 /** Rows of the public list's table: | URL | Name | Description | Team | [Link](agent url) |. */
 export function parseList(md: string): { site: string; name: string; description: string; team: string; agentLink: string }[] {
@@ -126,7 +134,12 @@ export async function buildDirectory(get: Fetcher = liveFetch, listUrl = LIST_UR
   const list = await get(listUrl);
   if (list.status !== 200) throw new Error(`public list answered HTTP ${list.status}`);
   const rows = parseList(list.text);
-  const sites = await Promise.all(rows.map((row, i) => readSite(row, i, get)));
+  const sites = await Promise.all(rows.map((row, i) =>
+    withTimeout(readSite(row, i, get), 40000, "reading the site").catch((e): Site => ({
+      id: row.agentLink, name: row.name, site: row.site, description: row.description, team: row.team, peerUrl: "", network: "",
+      toolName: "", frontMan: "", sampleQueries: [], category: "everyday", loadable: false, listedOrder: i,
+      problems: [`could not be reached: ${(e as Error).message}`],
+    }))));
   // Two sites whose network URLs end the same way would get the same tool name in the
   // runtime, and the second would hide the first. Keep the earlier listing; tell the later one.
   const seen = new Map<string, string>();

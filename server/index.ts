@@ -65,20 +65,42 @@ export function manifestFor(origin: string, dir: Directory | null): Record<strin
 
 export type DirectoryStore = { get: () => Directory | null; refresh: () => Promise<void> };
 
-/** Keeps the latest directory in memory. A failed refresh keeps the previous one. */
-export function directoryStore(build: () => Promise<Directory> = () => buildDirectory()): DirectoryStore {
+/** True when a new read looks like a network failure on our side rather than real change:
+ *  fewer than half as many sites load as in the last good read. */
+export function looksBroken(next: Directory, prev: Directory | null): boolean {
+  if (!prev) return false;
+  const ok = (d: Directory) => d.sites.filter((s) => s.loadable).length;
+  return ok(prev) >= 4 && ok(next) < ok(prev) / 2;
+}
+
+/** Keeps the latest good directory in memory. A failed or suspect refresh keeps the previous one
+ *  and tries again in 10 minutes (on Cloud Run a paused CPU makes every site time out at once). */
+export function directoryStore(build: () => Promise<Directory> = () => buildDirectory(), retryMs = 600_000): DirectoryStore {
   let current: Directory | null = null;
   let running: Promise<void> | null = null;
-  return {
+  const store: DirectoryStore = {
     get: () => current,
     refresh: () => {
-      running ??= build()
-        .then((d) => { current = d; console.log(`Directory: ${d.sites.length} sites, ${d.sites.filter((s) => s.loadable).length} loadable`); })
+      if (running) return running;
+      const t0 = Date.now();
+      console.log("Directory: reading the public list");
+      running = build()
+        .then((d) => {
+          const ok = d.sites.filter((s) => s.loadable).length;
+          if (looksBroken(d, current)) {
+            console.warn(`Directory: only ${ok} sites loaded (was ${current!.sites.filter((s) => s.loadable).length}); keeping the previous read, retrying soon`);
+            setTimeout(() => store.refresh(), retryMs).unref?.();
+            return;
+          }
+          current = d;
+          console.log(`Directory: ${d.sites.length} sites, ${ok} loadable, ${Date.now() - t0} ms`);
+        })
         .catch((e) => console.warn("Directory refresh failed, keeping the previous one:", (e as Error).message))
         .finally(() => { running = null; });
       return running;
     },
   };
+  return store;
 }
 
 export function createApp(store: DirectoryStore, getKey: () => string | undefined = () => process.env.GEMINI_API_KEY): express.Express {

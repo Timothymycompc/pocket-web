@@ -5,7 +5,7 @@ import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import request from "node:http";
 import { buildDirectory, parseList, baseAndName, categorize, toolNameFor, pocketNetwork } from "../server/directory.ts";
-import { createApp, directoryStore, manifestFor } from "../server/index.ts";
+import { createApp, directoryStore, manifestFor, looksBroken } from "../server/index.ts";
 
 const fixture = JSON.parse(readFileSync(new URL("./fixtures/agentic-web-2026-11-23.json", import.meta.url), "utf8"));
 const replay = async (url: string) => {
@@ -108,4 +108,18 @@ test("server: share target hands shared text to the app; public files have CORS"
     const health = await get("/health");
     assert.equal(JSON.parse(health.body).ok, true);
   } finally { server.close(); }
+});
+
+test("a refresh where most sites suddenly fail is not trusted; the last good read stays", async () => {
+  const good = await buildDirectory(replay);
+  const bad = { ...good, sites: good.sites.map((s) => ({ ...s, loadable: false, problems: ["could not be reached: the request took over 15 s"] })) };
+  assert.equal(looksBroken(bad, good), true);
+  assert.equal(looksBroken(good, null), false);
+  const oneGone = { ...good, sites: good.sites.slice(1) };
+  assert.equal(looksBroken(oneGone, good), false, "a real removal is accepted");
+  let n = 0;
+  const store = directoryStore(async () => (n++ === 0 ? good : bad), 60_000);
+  await store.refresh();
+  await store.refresh();
+  assert.equal(store.get(), good);
 });

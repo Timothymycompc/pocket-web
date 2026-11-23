@@ -2,7 +2,7 @@
 
 This folder is the browser runtime from [cognizant-ai-lab/nsdeploy](https://github.com/cognizant-ai-lab/nsdeploy)
 (`nsdeploy/runtime/`, Apache-2.0, see `LICENSE.txt`; upstream commit in `UPSTREAM_COMMIT`).
-Pulse Safety Desk changed five things. Each change is marked `[pulse-safety-desk patch]` in the code.
+These five changes were first made for Pulse Safety Desk (same author) and are reused here. Each change is marked `[pulse-safety-desk patch]` in the code.
 
 1. `engine.js`, `llm.js`: a manifest may set `llm_router.publisher_funded: true`, so the site's own
    default router runs without a visitor key (spec section 4, "Default inference"). Peers inherit it

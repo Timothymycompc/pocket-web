@@ -36,5 +36,290 @@
     "toolCalls": [
       "tool:plainly_agent_plainly_document_helper:error"
     ]
+  },
+  {
+    "name": "Agent Customs",
+    "peerUrl": "https://montbaga.github.io/agent-customs/agent_customs",
+    "question": "Inspect https://agent-customs-range.github.io/shady_pizza/shady_pizza and explain the verdict in plain words.",
+    "seconds": 10,
+    "answer": "Error from tool 'agent_customs_agent_customs': document is not defined",
+    "errors": [
+      "tool agent_customs_agent_customs: document is not defined",
+      "remote_fetch : document is not defined"
+    ],
+    "consents": [
+      "montbaga.github.io (network)"
+    ],
+    "toolCalls": [
+      "tool:agent_customs_agent_customs:error"
+    ]
+  },
+  {
+    "name": "Agent Atlas",
+    "peerUrl": "https://agent-atlas-phi.vercel.app/agent_atlas",
+    "question": "Is there an agentic website that books boat tours? Is it safe to link to?",
+    "seconds": 13,
+    "answer": "Error from tool 'agent_atlas': document is not defined",
+    "errors": [
+      "tool agent_atlas: document is not defined",
+      "remote_fetch : document is not defined"
+    ],
+    "consents": [
+      "agent-atlas-phi.vercel.app (network)"
+    ],
+    "toolCalls": [
+      "tool:agent_atlas:error"
+    ]
+  },
+  {
+    "name": "Three Numbers",
+    "peerUrl": "https://ledenti.github.io/trois-nombres/three_numbers",
+    "question": "What is the track record of rGJsjkfmASA2ezXYDpTQJZDp9tRgCJAPhw on testnet?",
+    "seconds": 18,
+    "answer": "Error from tool 'trois_nombres_three_numbers': document is not defined",
+    "errors": [
+      "tool trois_nombres_three_numbers: document is not defined",
+      "remote_fetch : document is not defined"
+    ],
+    "consents": [
+      "ledenti.github.io (network)"
+    ],
+    "toolCalls": [
+      "tool:trois_nombres_three_numbers:error"
+    ]
+  },
+  {
+    "name": "NandaSeal Trust Studio",
+    "peerUrl": "https://cocvn157.github.io/nanda-seal/nanda_seal_verifier",
+    "question": "Verify NandaSeal's own cryptographic AgentFacts seal right now.",
+    "seconds": 11,
+    "answer": "Error from tool 'nanda_seal_nanda_seal_verifier': document is not defined",
+    "errors": [
+      "tool nanda_seal_nanda_seal_verifier: document is not defined",
+      "remote_fetch : document is not defined"
+    ],
+    "consents": [
+      "cocvn157.github.io (network)"
+    ],
+    "toolCalls": [
+      "tool:nanda_seal_nanda_seal_verifier:error"
+    ]
+  },
+  {
+    "name": "Deadline Desk",
+    "peerUrl": "https://deadline-desk-agent.vercel.app/deadline_desk",
+    "question": "Which hackathons that allow generative AI close in the next four weeks?",
+    "seconds": 16,
+    "answer": "Error from tool 'deadline_desk': document is not defined",
+    "errors": [
+      "tool deadline_desk: document is not defined",
+      "remote_fetch : document is not defined"
+    ],
+    "consents": [
+      "deadline-desk-agent.vercel.app (network)"
+    ],
+    "toolCalls": [
+      "tool:deadline_desk:error"
+    ]
+  },
+  {
+    "name": "Agent Crash Test",
+    "peerUrl": "https://d3c7h3snp0n4hj.cloudfront.net/agent_crash_test",
+    "question": "What does the crash test tell me that reading my network file does not?",
+    "seconds": 27,
+    "answer": "Error from tool 'agent_crash_test': document is not defined",
+    "errors": [
+      "tool agent_crash_test: document is not defined",
+      "remote_fetch : document is not defined"
+    ],
+    "consents": [
+      "d3c7h3snp0n4hj.cloudfront.net (network)"
+    ],
+    "toolCalls": [
+      "tool:agent_crash_test:error"
+    ]
+  },
+  {
+    "name": "ScopeGate Studio",
+    "peerUrl": "https://cocvn157.github.io/scopegate-studio/scopegate_broker",
+    "question": "Evaluate an outbound peer call against ScopeGate's egress firewall and sly_data filter.",
+    "seconds": 17,
+    "answer": "Error from tool 'scopegate_studio_scopegate_broker': document is not defined",
+    "errors": [
+      "tool scopegate_studio_scopegate_broker: document is not defined",
+      "remote_fetch : document is not defined"
+    ],
+    "consents": [
+      "cocvn157.github.io (network)"
+    ],
+    "toolCalls": [
+      "tool:scopegate_studio_scopegate_broker:error"
+    ]
+  },
+  {
+    "name": "MeshWeave Studio",
+    "peerUrl": "https://cocvn157.github.io/meshweave-studio/meshweave_composer",
+    "question": "Compose and run a 3-origin MessageChannel DAG across ScopeGate, NandaSeal, and MeshWeave.",
+    "seconds": 12,
+    "answer": "",
+    "errors": [
+      "LLM HTTP 503: [{\n  \"error\": {\n    \"code\": 503,\n    \"message\": \"This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later.\",\n    \"status\": \"UNAVAILABLE\"\n  }\n}\n]",
+      "run : LLM HTTP 503: [{\n  \"error\": {\n    \"code\": 503,\n    \"message\": \"This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later.\",\n    \"status\": \"UNAVAI",
+      "agent caller: LLM HTTP 503: [{\n  \"error\": {\n    \"code\": 503,\n    \"message\": \"This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later.\",\n    \"status\": \"UNAVAI",
+      "model_call : LLM HTTP 503: [{\n  \"error\": {\n    \"code\": 503,\n    \"message\": \"This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later.\",\n    \"status\": \"UNAVAI"
+    ],
+    "consents": [],
+    "toolCalls": []
+  },
+  {
+    "name": "Retrofit",
+    "peerUrl": "https://retrofit.thecreativetoken.com/retrofit_guide",
+    "question": "What does Retrofit do?",
+    "seconds": 23,
+    "answer": "Error from tool 'retrofit_guide': document is not defined",
+    "errors": [
+      "tool retrofit_guide: document is not defined",
+      "remote_fetch : document is not defined"
+    ],
+    "consents": [
+      "retrofit.thecreativetoken.com (network)"
+    ],
+    "toolCalls": [
+      "tool:retrofit_guide:error"
+    ]
+  },
+  {
+    "name": "Citation Mirror",
+    "peerUrl": "https://citation-mirror.vercel.app/citation_mirror",
+    "question": "Which models in the Index favour pages written by their own developer?",
+    "seconds": 17,
+    "answer": "Error from tool 'citation_mirror': document is not defined",
+    "errors": [
+      "tool citation_mirror: document is not defined",
+      "remote_fetch : document is not defined"
+    ],
+    "consents": [
+      "citation-mirror.vercel.app (network)"
+    ],
+    "toolCalls": [
+      "tool:citation_mirror:error"
+    ]
+  },
+  {
+    "name": "Spare Hours",
+    "peerUrl": "https://spare-hours-agent.vercel.app/spare_hours",
+    "question": "I have 11 free hours a week. Could I finish a hackathon project that is due in six weeks?",
+    "seconds": 11,
+    "answer": "",
+    "errors": [
+      "LLM HTTP 503: [{\n  \"error\": {\n    \"code\": 503,\n    \"message\": \"This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later.\",\n    \"status\": \"UNAVAILABLE\"\n  }\n}\n]",
+      "run : LLM HTTP 503: [{\n  \"error\": {\n    \"code\": 503,\n    \"message\": \"This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later.\",\n    \"status\": \"UNAVAI",
+      "agent caller: LLM HTTP 503: [{\n  \"error\": {\n    \"code\": 503,\n    \"message\": \"This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later.\",\n    \"status\": \"UNAVAI",
+      "model_call : LLM HTTP 503: [{\n  \"error\": {\n    \"code\": 503,\n    \"message\": \"This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later.\",\n    \"status\": \"UNAVAI"
+    ],
+    "consents": [],
+    "toolCalls": []
+  },
+  {
+    "name": "BacaJelas",
+    "peerUrl": "https://bacajelas-agentic.web.app/bacajelas",
+    "question": "Please simplify this paragraph so a 12-year-old can follow it.",
+    "seconds": 7,
+    "answer": "Error from tool 'bacajelas': document is not defined",
+    "errors": [
+      "tool bacajelas: document is not defined",
+      "remote_fetch : document is not defined"
+    ],
+    "consents": [
+      "bacajelas-agentic.web.app (network)"
+    ],
+    "toolCalls": [
+      "tool:bacajelas:error"
+    ]
+  },
+  {
+    "name": "Overlap",
+    "peerUrl": "https://overlap-ana.vercel.app/overlap_pass",
+    "question": "Is this person free on 2026-11-26 from 14:30 to 15:00 UTC or 15:30 to 16:00 UTC, for a 30 minute pricing sync?",
+    "seconds": 10,
+    "answer": "Error from tool 'overlap_pass': document is not defined",
+    "errors": [
+      "tool overlap_pass: document is not defined",
+      "remote_fetch : document is not defined"
+    ],
+    "consents": [
+      "overlap-ana.vercel.app (network)"
+    ],
+    "toolCalls": [
+      "tool:overlap_pass:error"
+    ]
+  },
+  {
+    "name": "AegisWeave",
+    "peerUrl": "https://pecopeko.github.io/aegisweave/aegisweave_hub",
+    "question": "Compare quotes from Nordic Compute and Kyoto Studio for an urgent GPU + localization sprint under $480 with >= 99.5% SLA, and issue a SHA-256 mandate receipt.",
+    "seconds": 11,
+    "answer": "Error from tool 'aegisweave_aegisweave_hub': Network 'aegisweave_hub' (pecopeko.github.io) failed validation: Agent 'procurement_concierge' references missing tool 'nordic_compute'.; Agent 'procurement_concierge' references missing tool 'kyoto_studio'.; Agent 'policy_arbiter' references missing tool 'website_create_spending_mandate'.; Agent 'policy_arbiter' references missing tool 'website_evaluate_sealed_bids'.; Agent 'policy_arbiter' references missing tool 'website_issue_settlement_receipt'.; Agent 'policy_arbiter' references missing tool 'website_list_receipts'.; Agent 'conformance_auditor' references missing tool 'website_audit_peer_manifest'.",
+    "errors": [
+      "tool aegisweave_aegisweave_hub: Network 'aegisweave_hub' (pecopeko.github.io) failed validation: Agent 'procurement_concierge' references missing tool 'nordic_compute'.; Agent 'procurement_concierge' references missing tool 'kyoto_s",
+      "remote_fetch : Network 'aegisweave_hub' (pecopeko.github.io) failed validation: Agent 'procurement_concierge' references missing tool 'nordic_compute'.; Agent 'procurement_concierge' references missing tool 'kyoto_s"
+    ],
+    "consents": [
+      "pecopeko.github.io (network)"
+    ],
+    "toolCalls": [
+      "tool:aegisweave_aegisweave_hub:error"
+    ]
+  },
+  {
+    "name": "FactGate",
+    "peerUrl": "https://factgate.vercel.app/factgate",
+    "question": "Should my agent pay https://agent402.tools/api/weather-forecast? Give FactGate's verdict with the reasons.",
+    "seconds": 6,
+    "answer": "Error from tool 'factgate': document is not defined",
+    "errors": [
+      "tool factgate: document is not defined",
+      "remote_fetch : document is not defined"
+    ],
+    "consents": [
+      "factgate.vercel.app (network)"
+    ],
+    "toolCalls": [
+      "tool:factgate:error"
+    ]
+  },
+  {
+    "name": "Recalled?",
+    "peerUrl": "https://chen931222.github.io/recalled/recall_check",
+    "question": "Was the Graco Quattro Tour stroller recalled?",
+    "seconds": 7,
+    "answer": "Error from tool 'recalled_recall_check': document is not defined",
+    "errors": [
+      "tool recalled_recall_check: document is not defined",
+      "remote_fetch : document is not defined"
+    ],
+    "consents": [
+      "chen931222.github.io (network)"
+    ],
+    "toolCalls": [
+      "tool:recalled_recall_check:error"
+    ]
+  },
+  {
+    "name": "Memory Policy Audit",
+    "peerUrl": "https://skybleak333.github.io/memory-policy-audit/agents/policy_audit",
+    "question": "What was the annual plan refund window on 2026-11-23?",
+    "seconds": 4,
+    "answer": "Error from tool 'memory_policy_audit_agents_policy_audit': document is not defined",
+    "errors": [
+      "tool memory_policy_audit_agents_policy_audit: document is not defined",
+      "remote_fetch : document is not defined"
+    ],
+    "consents": [
+      "skybleak333.github.io (network)"
+    ],
+    "toolCalls": [
+      "tool:memory_policy_audit_agents_policy_audit:error"
+    ]
   }
 ]

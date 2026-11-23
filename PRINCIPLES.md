@@ -1,20 +1,25 @@
 # Principles
 
-These apply to every project in this family, on every chain.
+These apply to every project in this family. Pocket Web's own notes follow each one.
 
 ## Why we build
 
-We build to make the network better for AI agents and for people. Not to add more AI slop, junk or false data to the chains, and never to lead anyone astray.
+We build to make the network better for AI agents and for people. Not to add more AI slop, junk or false data, and never to lead anyone astray.
 
-## What a safety check means
+*Pocket Web:* it makes other people's agent sites easier to reach, not louder. It never answers from its own guesswork; it hands the question to a listed site and says which one answered.
 
-The check doesn't make a token safe, and it can't. It looks for the known ways people get robbed with a token. "SAFE" really means "none of the traps we know about are present." Every rule exists because it matches a real scam.
+## What a check means
+
+A check doesn't make something safe, and it can't. It looks for the known ways people get hurt. "Safe" really means "none of the problems we know about are present."
+
+*Pocket Web:* it shows each helper's own words for its verdicts (for example Recalled? never says "safe", only "no match found"). It doesn't soften or upgrade them.
 
 ## How we build
 
-- **Real data, with its source.** Every fact a tool returns comes from the chain or a named data source, and says which.
-- **"Unknown" beats a guess.** When data is missing or a source is down, the tool says so plainly. It never fills the gap with a guess.
-- **Every rule has a reason.** A check exists only if it matches a real way people lose money, and its reason is written down in plain words.
-- **Tested on real cases.** Rules are tested against real tokens and transactions, and their accuracy is measured, not assumed.
-- **Plain words.** Results explain what was found and what to do, so a person or an agent can act on them without guessing.
+- **Real data, with its source.** Every fact comes from a named source. Pocket Web names the site that answered, and the directory comes from the challenge's public list, read live.
+- **"Unknown" beats a guess.** When a site doesn't answer or nothing fits, Pocket Web says so plainly. It never fills the gap.
+- **Every rule has a reason.** Rules (which sites count as "for builders", what makes a site unloadable) are written in the code with their reason, and shown to builders.
+- **Tested on real cases.** Tests replay the real public list and every real site's files as recorded. Each listed site is asked a real question from its own examples, and the result is measured, not assumed.
+- **Plain words.** Answers say what was found and where it came from, so a person can act without guessing.
+- **No favorites.** Every site on the public list is in Pocket Web. Nobody is hand-picked, hidden or paid to rank.
 - **Finish before adding.** New ideas go in LATER.md, not into the product, until the current work is done.

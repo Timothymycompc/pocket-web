@@ -1,0 +1,429 @@
+{
+  "updatedAt": "2026-11-23T23:10:42.832Z",
+  "source": "https://github.com/cognizant-ai-labs/agentic-web/blob/main/docs/agentic_websites.md",
+  "sites": [
+    {
+      "id": "https://worldwideagenticweb.org/wp-content/plugins/wwaw-agent-widget/assets/worldwide_agentic_web_widget/v1.0.9/worldwide_agentic_web_widget",
+      "name": "The Open Agentic Web Challenge",
+      "site": "https://worldwideagenticweb.org/",
+      "description": "Answers questions about the Open Agentic Web and how to participate in the challenge.",
+      "team": "",
+      "peerUrl": "https://worldwideagenticweb.org/wp-content/plugins/wwaw-agent-widget/assets/worldwide_agentic_web_widget/v1.0.9/worldwide_agentic_web_widget",
+      "network": "worldwide_agentic_web_widget",
+      "toolName": "wp_content_plugins_wwaw_agent_widget_assets_worldwide_agenti",
+      "frontMan": "worldwide_agentic_web_guide",
+      "sampleQueries": [
+        "What is the World Wide Agentic Web initiative?",
+        "What are the dates, prize, tracks, and project areas for the challenge?",
+        "How can I pre-register, subscribe, or discuss a partnership?",
+        "Where are the workshop and technical resources?"
+      ],
+      "category": "builders",
+      "loadable": false,
+      "problems": [
+        "agent-manifest.json can't be read by other sites (no CORS header)",
+        "the network file can't be read by other sites (no CORS header)"
+      ],
+      "listedOrder": 0
+    },
+    {
+      "id": "https://shutdown-clerk.pages.dev/shutdown_clerk",
+      "name": "Shutdown Clerk",
+      "site": "https://shutdown-clerk.pages.dev/",
+      "description": "Answers what breaks in a public GitHub repository before a vendor shutdown or breaking release, with file:line evidence and fix steps. Runs a small model in the visitor's browser; callable by peers.",
+      "team": "",
+      "peerUrl": "https://shutdown-clerk.pages.dev/shutdown_clerk",
+      "network": "shutdown_clerk",
+      "toolName": "shutdown_clerk",
+      "frontMan": "shutdown_clerk",
+      "sampleQueries": [
+        "What breaks in vercel/nextjs-subscription-payments before March 2027?",
+        "Which shutdowns and breaking releases are still ahead this year?",
+        "Scan kpi-ua/schedule.kpi.ua and tell me what to fix first.",
+        "What is the Open Agentic Web Challenge and how do I take part?"
+      ],
+      "category": "builders",
+      "loadable": true,
+      "problems": [],
+      "listedOrder": 1
+    },
+    {
+      "id": "https://sainath998.github.io/plainly-agent/plainly_document_helper",
+      "name": "Plainly (agentic edition)",
+      "site": "https://sainath998.github.io/plainly-agent/",
+      "description": "Explains bank letters, bills, rental agreements and lab reports in plain words. Agents only ever see a redacted copy, and run on Gemini Nano in the visitor's browser (no key).",
+      "team": "Sainath",
+      "peerUrl": "https://sainath998.github.io/plainly-agent/plainly_document_helper",
+      "network": "plainly_document_helper",
+      "toolName": "plainly_agent_plainly_document_helper",
+      "frontMan": "document_helper",
+      "sampleQueries": [
+        "Load the bank sample and tell me what I need to do and by when.",
+        "Pin a checklist of what I need to do.",
+        "Where can I complain if my bank freezes my account?",
+        "Is a deposit of two months' rent normal?"
+      ],
+      "category": "everyday",
+      "loadable": true,
+      "problems": [],
+      "listedOrder": 2
+    },
+    {
+      "id": "https://montbaga.github.io/agent-customs/agent_customs",
+      "name": "Agent Customs",
+      "site": "https://montbaga.github.io/agent-customs/",
+      "description": "Checks another site's AI agents for hidden tricks before they run in your browser, and adds the same check to any agentic site with one folder and two lines.",
+      "team": "Monty Bagati",
+      "peerUrl": "https://montbaga.github.io/agent-customs/agent_customs",
+      "network": "agent_customs",
+      "toolName": "agent_customs_agent_customs",
+      "frontMan": "customs_officer",
+      "sampleQueries": [
+        "Inspect https://agent-customs-range.github.io/shady_pizza/shady_pizza and explain the verdict in plain words.",
+        "What does the Sunny Bakery test network offer? Ask it.",
+        "Compare https://agent-customs-range.github.io/sunny_bakery/sunny_bakery with https://agent-customs-range.github.io/rugpull/sunny_bakery.",
+        "Inspect https://agent-customs-range.github.io/bank_helper/bank_helper and tell me what the publisher should fix."
+      ],
+      "category": "builders",
+      "loadable": true,
+      "problems": [],
+      "listedOrder": 3
+    },
+    {
+      "id": "https://agent-atlas-phi.vercel.app/agent_atlas",
+      "name": "Agent Atlas",
+      "site": "https://agent-atlas-phi.vercel.app/",
+      "description": "Directory and trust checker for the open agentic web: finds agentic websites by what they do and checks a site's spec conformance, the origins its agents contact and whether other sites can call it. Also an MCP server.",
+      "team": "Agent Atlas",
+      "peerUrl": "https://agent-atlas-phi.vercel.app/agent_atlas",
+      "network": "agent_atlas",
+      "toolName": "agent_atlas",
+      "frontMan": "atlas_guide",
+      "sampleQueries": [
+        "Is there an agentic website that books boat tours? Is it safe to link to?",
+        "Check https://example.com/my_network against the spec and tell me what to fix.",
+        "Which sites in the directory are fully conformant?",
+        "Compare the two sites that sell food and tell me which one I could call from my own site."
+      ],
+      "category": "builders",
+      "loadable": true,
+      "problems": [],
+      "listedOrder": 4
+    },
+    {
+      "id": "https://ledenti.github.io/trois-nombres/three_numbers",
+      "name": "Three Numbers",
+      "site": "https://ledenti.github.io/trois-nombres/",
+      "description": "Before you deal with someone, read their XRPL key: how many escrow commitments it signed, kept and let expire, read live from the ledger, and what those numbers cannot prove. No server, no verdict; callable by peers through a public read-only MCP service.",
+      "team": "matter-x-",
+      "peerUrl": "https://ledenti.github.io/trois-nombres/three_numbers",
+      "network": "three_numbers",
+      "toolName": "trois_nombres_three_numbers",
+      "frontMan": "reader",
+      "sampleQueries": [
+        "What is the track record of rGJsjkfmASA2ezXYDpTQJZDp9tRgCJAPhw on testnet?",
+        "Show the example key on the page.",
+        "What does expired mean here, and does it prove someone cheated?",
+        "Who owns rGJsjkfmASA2ezXYDpTQJZDp9tRgCJAPhw?"
+      ],
+      "category": "everyday",
+      "loadable": true,
+      "problems": [],
+      "listedOrder": 5
+    },
+    {
+      "id": "https://cocvn157.github.io/nanda-seal/nanda_seal_verifier",
+      "name": "NandaSeal Trust Studio",
+      "site": "https://cocvn157.github.io/nanda-seal/",
+      "description": "Signs and verifies Open Agentic Web manifests (`agent-manifest.json` + `.network.json`) in the browser using Web Crypto ECDSA P-256 `AgentFacts`, detects 1-byte tampering, audits MVP Profile 0.2 conformance, and offers a 2-line `<nanda-seal>` badge component.",
+      "team": "`@cocvn157`",
+      "peerUrl": "https://cocvn157.github.io/nanda-seal/nanda_seal_verifier",
+      "network": "nanda_seal_verifier",
+      "toolName": "nanda_seal_nanda_seal_verifier",
+      "frontMan": "trust_coordinator",
+      "sampleQueries": [
+        "Verify NandaSeal's own cryptographic AgentFacts seal right now.",
+        "Run a 1-byte tamper simulation to show how Web Crypto detects manifest modification.",
+        "Audit https://worldwideagenticweb.org/ for Open Agentic Web MVP 0.3 conformance.",
+        "How do I embed the <nanda-seal> Web Component on my agentic website?"
+      ],
+      "category": "builders",
+      "loadable": true,
+      "problems": [],
+      "listedOrder": 6
+    },
+    {
+      "id": "https://deadline-desk-agent.vercel.app/deadline_desk",
+      "name": "Deadline Desk",
+      "site": "https://deadline-desk-agent.vercel.app/",
+      "description": "A board of prize contests and hackathons you can still enter: filters by category, language, AI policy, prize and deadline, keeps a shortlist and plans start, draft and submit dates back from each deadline. Callable by peers: its bridge shares three read actions, with a read-only MCP service behind them.",
+      "team": "Class-now",
+      "peerUrl": "https://deadline-desk-agent.vercel.app/deadline_desk",
+      "network": "deadline_desk",
+      "toolName": "deadline_desk",
+      "frontMan": "deadline_desk_assistant",
+      "sampleQueries": [
+        "Which hackathons that allow generative AI close in the next four weeks?",
+        "Show me English writing or essay prizes with a top prize of at least $1,000.",
+        "Add the Open Agentic Web Challenge to my shortlist and plan when I should start.",
+        "I have three calls on my shortlist. Do any of their submit dates clash?"
+      ],
+      "category": "everyday",
+      "loadable": true,
+      "problems": [],
+      "listedOrder": 7
+    },
+    {
+      "id": "https://d3c7h3snp0n4hj.cloudfront.net/agent_crash_test",
+      "name": "Agent Crash Test",
+      "site": "https://d3c7h3snp0n4hj.cloudfront.net/",
+      "description": "Runs a model that says yes to everything against an agentic website, on its own page, as a dry run, and reports which site actions run without asking the visitor and which sites the model tried to contact. No AI key needed. Two demo shops show what three labels change; one line runs it on your own site; callable by peers.",
+      "team": "Mohammed Abadi",
+      "peerUrl": "https://d3c7h3snp0n4hj.cloudfront.net/agent_crash_test",
+      "network": "agent_crash_test",
+      "toolName": "agent_crash_test",
+      "frontMan": "crash_test_guide",
+      "sampleQueries": [
+        "What does the crash test tell me that reading my network file does not?",
+        "Run the crash test on the weak demo shop and explain the result.",
+        "Now run it on the fixed shop. What changed, and why?",
+        "How do I run it on my own site?"
+      ],
+      "category": "builders",
+      "loadable": true,
+      "problems": [],
+      "listedOrder": 8
+    },
+    {
+      "id": "https://cocvn157.github.io/scopegate-studio/scopegate_broker",
+      "name": "ScopeGate Studio",
+      "site": "https://cocvn157.github.io/scopegate-studio/",
+      "description": "Runtime egress firewall, isolated Web Worker + MessageChannel micro-sandbox, sly_data boundary filter, HITL write consent gate, hash-chained ECDSA audit ledger, and WebMCP / action-bridge capability broker (MVP Profile 0.3).",
+      "team": "`@cocvn157`",
+      "peerUrl": "https://cocvn157.github.io/scopegate-studio/scopegate_broker",
+      "network": "scopegate_broker",
+      "toolName": "scopegate_studio_scopegate_broker",
+      "frontMan": "gatekeeper_broker",
+      "sampleQueries": [
+        "Evaluate an outbound peer call against ScopeGate's egress firewall and sly_data filter.",
+        "Run a rogue coded-tool egress attack inside the isolated Web Worker sandbox.",
+        "Simulate a composition depth and step-budget overflow tripwire.",
+        "Inspect ScopeGate's live WebMCP and action-bridge capabilities."
+      ],
+      "category": "builders",
+      "loadable": true,
+      "problems": [],
+      "listedOrder": 9
+    },
+    {
+      "id": "https://cocvn157.github.io/meshweave-studio/meshweave_composer",
+      "name": "MeshWeave Studio",
+      "site": "https://cocvn157.github.io/meshweave-studio/",
+      "description": "Cross-site Open Agentic Web workflow DAG composer, live ActionBridgeClient MessageChannel runner, partner bridge contract & interop matrix prober, and composable .network.json topology compiler (MVP Profile 0.3).",
+      "team": "`@cocvn157`",
+      "peerUrl": "https://cocvn157.github.io/meshweave-studio/meshweave_composer",
+      "network": "meshweave_composer",
+      "toolName": "meshweave_studio_meshweave_composer",
+      "frontMan": "mesh_orchestrator",
+      "sampleQueries": [
+        "Compose and run a 3-origin MessageChannel DAG across ScopeGate, NandaSeal, and MeshWeave.",
+        "Probe all Open Agentic Web partner websites for bridge framing, CORS, and catalog schemas.",
+        "Validate whether upstream hop outputs satisfy downstream bridge action inputSchema contracts.",
+        "Export a compiled MVP Profile 0.3 .network.json, agent-manifest.json, and trace digest."
+      ],
+      "category": "builders",
+      "loadable": true,
+      "problems": [],
+      "listedOrder": 10
+    },
+    {
+      "id": "https://retrofit.thecreativetoken.com/retrofit_guide",
+      "name": "Retrofit",
+      "site": "https://retrofit.thecreativetoken.com/",
+      "description": "Paste the address of a public website: Retrofit scores how ready it is for AI agents, says what to fix first, and builds a working agent for it from a saved copy of its public pages. The agent runs in your browser and answers with source links, on free AI or your own key. Callable by peers: its guide agent can score a site.",
+      "team": "juan294",
+      "peerUrl": "https://retrofit.thecreativetoken.com/retrofit_guide",
+      "network": "retrofit_guide",
+      "toolName": "retrofit_guide",
+      "frontMan": "retrofit_guide",
+      "sampleQueries": [
+        "What does Retrofit do?",
+        "What is the open agentic web?",
+        "How ready is example.com for AI agents?",
+        "What should I fix first on my site?"
+      ],
+      "category": "builders",
+      "loadable": true,
+      "problems": [],
+      "listedOrder": 11
+    },
+    {
+      "id": "https://citation-mirror.vercel.app/citation_mirror",
+      "name": "Citation Mirror",
+      "site": "https://citation-mirror.vercel.app/",
+      "description": "Does your AI cite its own kind? Runs a preregistered citation-bias test live on the model the visitor picks, on their own key, and shows kin preference and position bias next to the AI Citation Bias Index. Callable by peers: a called network runs on the caller's model, so its shared spot check audits the model the calling site runs on.",
+      "team": "frostyhand",
+      "peerUrl": "https://citation-mirror.vercel.app/citation_mirror",
+      "network": "citation_mirror",
+      "toolName": "citation_mirror",
+      "frontMan": "citation_mirror",
+      "sampleQueries": [
+        "Which models in the Index favour pages written by their own developer?",
+        "Test the model I am using now with a quick check.",
+        "Run a spot check on the model you are running on.",
+        "How does the test work, and what can it not tell me?"
+      ],
+      "category": "builders",
+      "loadable": true,
+      "problems": [],
+      "listedOrder": 12
+    },
+    {
+      "id": "https://spare-hours-agent.vercel.app/spare_hours",
+      "name": "Spare Hours",
+      "site": "https://spare-hours-agent.vercel.app/",
+      "description": "Checks whether a contest entry or side project fits the free hours in your week, and gives the day to start. Calls Deadline Desk, after a consent card, and tests its open calls against your own week. Callable by peers: its bridge shares an effort calculator.",
+      "team": "Class-now",
+      "peerUrl": "https://spare-hours-agent.vercel.app/spare_hours",
+      "network": "spare_hours",
+      "toolName": "spare_hours",
+      "frontMan": "spare_hours_assistant",
+      "sampleQueries": [
+        "I have 11 free hours a week. Could I finish a hackathon project that is due in six weeks?",
+        "Ask Deadline Desk which hackathons that allow generative AI close in the next eight weeks, and tell me which ones fit my week.",
+        "Make my Saturdays 5 hours and my Wednesdays 0.",
+        "Add an essay prize entry due in four weeks, and tell me if everything still fits."
+      ],
+      "category": "everyday",
+      "loadable": true,
+      "problems": [],
+      "listedOrder": 13
+    },
+    {
+      "id": "https://bacajelas-agentic.web.app/bacajelas",
+      "name": "BacaJelas",
+      "site": "https://bacajelas-agentic.web.app/",
+      "description": "A friendly reading companion for Indonesian ↔ English readers: four named agents (Rani, Sari, Alih, Rara) simplify, translate and summarise in the visitor's browser, with personal text held back by a deny-by-default sly_data policy and a written receipt for every run. Composes live in both directions: Rani visits Deadline Desk after a consent card and brings back live board answers; a second-origin porch site calls BacaJelas in return. Also ships an open-source network validator for the community.",
+      "team": "arizkis",
+      "peerUrl": "https://bacajelas-agentic.web.app/bacajelas",
+      "network": "bacajelas",
+      "toolName": "bacajelas",
+      "frontMan": "rani",
+      "sampleQueries": [
+        "Please simplify this paragraph so a 12-year-old can follow it.",
+        "Translate this Indonesian letter into friendly, natural English.",
+        "Summarise this long article into five kind bullet points.",
+        "This text is personal — explain it simply, and please keep it just between us."
+      ],
+      "category": "builders",
+      "loadable": true,
+      "problems": [],
+      "listedOrder": 14
+    },
+    {
+      "id": "https://overlap-ana.vercel.app/overlap_pass",
+      "name": "Overlap",
+      "site": "https://overlap-ana.vercel.app/",
+      "description": "Find a meeting time across companies without anyone sharing a calendar. Each person's page answers other agents only yes or no for exact times, within daily and weekly limits its own server enforces, and checks a signature that proves which page is asking. Three demo pages on three origins call each other after consent cards; callable by peers: its bridge checks times and sends a meeting request that opens on the person's own page.",
+      "team": "waterdoog",
+      "peerUrl": "https://overlap-ana.vercel.app/overlap_pass",
+      "network": "overlap_pass",
+      "toolName": "overlap_pass",
+      "frontMan": "pass_agent",
+      "sampleQueries": [
+        "Is this person free on 2026-11-26 from 14:30 to 15:00 UTC or 15:30 to 16:00 UTC, for a 30 minute pricing sync?",
+        "Send a meeting request for 2026-11-26 14:30-15:00 UTC titled Pricing sync.",
+        "What is the status of request OV-3F2A1C?",
+        "Show me their whole calendar for next week."
+      ],
+      "category": "everyday",
+      "loadable": true,
+      "problems": [],
+      "listedOrder": 15
+    },
+    {
+      "id": "https://pecopeko.github.io/aegisweave/aegisweave_hub",
+      "name": "AegisWeave",
+      "site": "https://pecopeko.github.io/aegisweave/",
+      "description": "Policy-bound sealed-bid multi-agent procurement, destination-scoped sly_data firewall, SHA-256 artifact pinning, and 15-check MVP Profile 0.3 conformance auditor running 100% in the visitor browser.",
+      "team": "peco",
+      "peerUrl": "https://pecopeko.github.io/aegisweave/aegisweave_hub",
+      "network": "aegisweave_hub",
+      "toolName": "aegisweave_aegisweave_hub",
+      "frontMan": "procurement_concierge",
+      "sampleQueries": [
+        "Compare quotes from Nordic Compute and Kyoto Studio for an urgent GPU + localization sprint under $480 with >= 99.5% SLA, and issue a SHA-256 mandate receipt.",
+        "Audit the peer network at ./peers/nordic_compute/nordic_compute for MVP Profile 0.3 conformance and prompt safety.",
+        "Test our firewall against the adversarial peer at ./peers/rogue_peer/rogue_peer — verify BYOK key isolation, sly_data blocking, and cycle protection.",
+        "Run the 7-check MVP Profile 0.3 Interoperability Suite and show the live CRUSE compliance table and chart."
+      ],
+      "category": "builders",
+      "loadable": false,
+      "problems": [
+        "the network doesn't validate: Agent 'procurement_concierge' references missing tool 'nordic_compute'. Agent 'procurement_concierge' references missing tool 'kyoto_studio'."
+      ],
+      "listedOrder": 16
+    },
+    {
+      "id": "https://factgate.vercel.app/factgate",
+      "name": "FactGate",
+      "site": "https://factgate.vercel.app/",
+      "description": "Checks a site, NANDA-listed agent or x402 seller before your agent links to it or pays it: does it answer as declared, does its ERC-8004 wallet match the payee, did paid calls deliver. Code returns ALLOW, CAUTION or BLOCK; the model only explains. Each destination asks first. One file puts the same gate in front of any agentic site; callable by peers.",
+      "team": "kzmttkc",
+      "peerUrl": "https://factgate.vercel.app/factgate",
+      "network": "factgate",
+      "toolName": "factgate",
+      "frontMan": "gate_coordinator",
+      "sampleQueries": [
+        "Should my agent pay https://agent402.tools/api/weather-forecast? Give FactGate's verdict with the reasons.",
+        "Does https://agent-atlas-phi.vercel.app/agent_atlas answer as its manifest declares? Check its MCP server too.",
+        "Whose wallet is behind https://agent402.tools/api/weather-forecast? Compare its payTo with its ERC-8004 registration.",
+        "How does FactGate decide between ALLOW, CAUTION and BLOCK?"
+      ],
+      "category": "builders",
+      "loadable": true,
+      "problems": [],
+      "listedOrder": 17
+    },
+    {
+      "id": "https://chen931222.github.io/recalled/recall_check",
+      "name": "Recalled?",
+      "site": "https://chen931222.github.io/recalled/",
+      "description": "Before you buy or list second-hand baby gear, check it against 3,339 U.S. CPSC and Health Canada recall notices: likely recalled, possible match or no match found (never \"safe\"), with the hazard, what to do and the official link. The check needs no AI key; the assistant answers only from the notices. Callable by peers: its bridge shares three reads with every site, and a demo resale site on a second origin asks it after a consent card before publishing a listing.",
+      "team": "Chen931222",
+      "peerUrl": "https://chen931222.github.io/recalled/recall_check",
+      "network": "recall_check",
+      "toolName": "recalled_recall_check",
+      "frontMan": "recall_checker",
+      "sampleQueries": [
+        "Was the Graco Quattro Tour stroller recalled?",
+        "I am selling a Pearhead learning set, model 87150. Is it recalled?",
+        "Check UPC 698904871507",
+        "Is this crib safe to buy?"
+      ],
+      "category": "everyday",
+      "loadable": true,
+      "problems": [],
+      "listedOrder": 18
+    },
+    {
+      "id": "https://skybleak333.github.io/memory-policy-audit/agents/policy_audit",
+      "name": "Memory Policy Audit",
+      "site": "https://skybleak333.github.io/memory-policy-audit/agents/",
+      "description": "Finds the refund policy in effect on a given date and cites its revision. Relate WebAssembly follows the revision graph from a stale recall result. Peer agents can call the same read-only date lookup through the browser action bridge.",
+      "team": "",
+      "peerUrl": "https://skybleak333.github.io/memory-policy-audit/agents/policy_audit",
+      "network": "policy_audit",
+      "toolName": "memory_policy_audit_agents_policy_audit",
+      "frontMan": "policy_assistant",
+      "sampleQueries": [
+        "What was the annual plan refund window on 2026-11-23?",
+        "Which refund policy applied on 2026-09-30?"
+      ],
+      "category": "everyday",
+      "loadable": true,
+      "problems": [],
+      "listedOrder": 19
+    }
+  ]
+}

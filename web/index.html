@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>Pocket Web</title>
+  <meta name="description" content="Send anything on your phone to the right AI helper on the open agentic web. Helpers built by independent people, run on your phone after you approve." />
+  <meta name="theme-color" content="#0a0f19" />
+  <link rel="manifest" href="./manifest.webmanifest" />
+  <link rel="icon" href="./icons/icon-192.png" />
+  <link rel="apple-touch-icon" href="./icons/icon-192.png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;700;800&family=JetBrains+Mono:wght@400;600&display=swap" />
+  <link rel="stylesheet" href="./app.css" />
+  <link rel="alternate" type="application/json" href="./agent-manifest.json" title="Agent manifest" />
+</head>
+<body>
+  <header class="top">
+    <a class="brand" href="#home"><span class="mesh" aria-hidden="true"><i></i><i></i><i></i></span>Pocket Web</a>
+    <button id="install" class="install" hidden>Install app</button>
+  </header>
+
+  <main>
+    <!-- HOME: what it is, when to use it, how -->
+    <section id="home" class="view" data-view="home">
+      <p class="eyebrow">Open agentic web · on your phone</p>
+      <h1>Send anything to the right <em>AI helper</em> on the open web.</h1>
+      <p class="lede">Pocket Web knows every agent site on the open agentic web's public list, built by independent people. Share a link or some text, and it picks the helper that fits, asks your OK, and runs that helper right on your phone.</p>
+
+      <ol class="steps">
+        <li><b>Install it</b><span>Tap <i>Install app</i>. Pocket Web joins your phone's Share menu.</span></li>
+        <li><b>Share something</b><span>In any app tap <i>Share → Pocket Web</i>, or type a question here.</span></li>
+        <li><b>Approve the helper</b><span>You see which site it picked and why. Tap <i>Allow</i>, get the answer with its source.</span></li>
+      </ol>
+
+      <h2>When to use it</h2>
+      <p class="sub">Tap an example to try it. Each one is a real site from the public list.</p>
+      <div id="when" class="cards" aria-live="polite"><p class="dim">Reading the public list…</p></div>
+
+      <div class="promise">
+        <div><b>Nobody owns the list.</b> Any site added to the public list shows up here, without asking us. No favorites, no paid placement.</div>
+        <div><b>Your phone does the work.</b> The helper's agents run in your browser. The site that built them never gets your AI key.</div>
+        <div><b>You stay in charge.</b> Pocket Web asks before it contacts any site. A helper that doesn't know says so. Nobody fills the gap with a guess.</div>
+      </div>
+      <p class="small dim">Not for anything urgent, medical or legal where you need a person. Helpers explain and check; they don't decide for you.</p>
+    </section>
+
+    <!-- ASK: the agent runtime -->
+    <section id="ask" class="view" data-view="ask" hidden>
+      <div id="shared" class="shared" hidden>
+        <p class="eyebrow">Shared with Pocket Web</p>
+        <p id="shared-text" class="shared-text"></p>
+        <p class="small dim">It's in the box below. Add what you want to know, then tap Send.</p>
+      </div>
+      <div id="line" class="line" role="status" aria-live="polite" hidden></div>
+      <div class="app-wrap"><div id="app">Loading the agent runtime…</div></div>
+    </section>
+
+    <!-- HELPERS: everyday sites -->
+    <section id="helpers" class="view" data-view="helpers" hidden>
+      <h1 class="h1-small">Helpers</h1>
+      <p class="sub">Every everyday site on the <a id="list-link" href="https://github.com/cognizant-ai-labs/agentic-web/blob/main/docs/agentic_websites.md">public list</a>. <span id="updated" class="dim"></span></p>
+      <div id="helper-list" class="list"></div>
+    </section>
+
+    <!-- BUILDERS: tools for builders + how to get listed -->
+    <section id="builders" class="view" data-view="builders" hidden>
+      <h1 class="h1-small">For builders</h1>
+      <div class="howto">
+        <h2>Get your site into Pocket Web</h2>
+        <p>You don't sign up with us. If your site is on the challenge's <a href="https://github.com/cognizant-ai-labs/agentic-web/blob/main/docs/agentic_websites.md">public list</a>, Pocket Web reads it within a few hours. To work well:</p>
+        <ol>
+          <li><b>Let other sites load your files.</b> Serve <code>agent-manifest.json</code> and your <code>.network.json</code> with <code>Access-Control-Allow-Origin: *</code>.</li>
+          <li><b>Add 2–3 <code>sample_queries</code></b> to your network entry. Pocket Web shows them as examples and uses them to pick you.</li>
+          <li><b>Write a one-line description</b> a regular person understands: what you check or do, and for whom.</li>
+          <li><b>Answer when another site calls you.</b> If your agents use your page's own actions, publish them through the action bridge.</li>
+        </ol>
+        <p class="small">Pocket Web is an agent site too. Load it from yours: <code id="peer-url" class="peer">https://this-site/pocket_web</code> · <a href="./agent-manifest.json">manifest</a> · <a href="./pocket_web.network.json">network</a> · <a href="https://github.com/Timothymycompc/pocket-web">source</a></p>
+      </div>
+      <h2>Tools for builders</h2>
+      <div id="builder-list" class="list"></div>
+      <h2>Listed sites that can't be loaded yet</h2>
+      <p class="sub">What Pocket Web saw when it read them, so their builders can fix it.</p>
+      <div id="broken-list" class="list"></div>
+    </section>
+  </main>
+
+  <nav class="tabs" aria-label="Sections">
+    <a href="#home" data-tab="home"><span class="ti">◎</span>Home</a>
+    <a href="#ask" data-tab="ask"><span class="ti">✦</span>Ask</a>
+    <a href="#helpers" data-tab="helpers"><span class="ti">☰</span>Helpers</a>
+    <a href="#builders" data-tab="builders"><span class="ti">⌘</span>Builders</a>
+  </nav>
+
+  <footer class="foot">
+    Helpers: the open agentic web's <a href="https://github.com/cognizant-ai-labs/agentic-web/blob/main/docs/agentic_websites.md">public list</a>, each built and run by its own team ·
+    Runtime: <a href="https://github.com/cognizant-ai-lab/nsdeploy">nsDeploy</a> (Apache-2.0) ·
+    <a href="https://github.com/Timothymycompc/pocket-web">Source</a>
+  </footer>
+
+  <script type="module" src="./app.js"></script>
+</body>
+</html>

@@ -1,4 +1,5 @@
 // llm.js — the LlmClient intrinsic: an OpenAI-compatible chat-completions client.
+// Changed by agentic-web. See README.md in this folder for what changed.
 
 import { assertModelForRouter, normalizeModelName } from "./model.js";
 import { ProviderError } from "./provider-error.js";
@@ -51,12 +52,14 @@ export function browserMockCompletion(messages = [], tools = []) {
 // Authorization.
 
 export class LlmClient {
-  constructor({ baseUrl, apiKey, trace, mock, keyless }) {
+  constructor({ baseUrl, apiKey, trace, mock, publisherFunded }) {
     this.baseUrl = (baseUrl || "").replace(/\/$/, "");
-    this.apiKey = apiKey || "";
     this.trace = trace;
     this.mock = !!mock;
-    this.keyless = !!keyless; // [pulse-safety-desk patch] publisher-funded default router
+    // A publisher-funded router is paid for by the site. It needs no key and
+    // never receives the visitor's.
+    this.publisherFunded = !!publisherFunded;
+    this.apiKey = this.publisherFunded ? "" : apiKey || "";
   }
 
   // messages: [{role, content, tool_calls?, tool_call_id?, name?}]
@@ -68,7 +71,7 @@ export class LlmClient {
     // placeholder "demo" to a live provider (which returns a confusing 401). This
     // happens e.g. when a shared/reloaded URL keeps the proxy router but no saved
     // BYOK profile/key is available in this browser.
-    if (!this.mock && !this.keyless && (!this.apiKey || this.apiKey === "demo")) {
+    if (!this.mock && !this.publisherFunded && (!this.apiKey || this.apiKey === "demo")) {
       throw new Error(`An AI provider key is required for ${hostOf(this.baseUrl) || "the configured provider"}. Open ⚙ AI model settings, paste your key, then select Save and start. Your key stays in this browser and is sent only to the configured provider.`);
     }
     assertModelForRouter(model, this.mock, hostOf(this.baseUrl));
@@ -79,7 +82,7 @@ export class LlmClient {
       mock: this.mock,
       routerHost: hostOf(this.baseUrl),
       endpoint: `${this.baseUrl}/chat/completions`,
-      keySource: this.apiKey ? "local BYOK (not shown)" : "none",
+      keySource: this.publisherFunded ? "none: paid for by this site" : this.apiKey ? "local BYOK (not shown)" : "none",
       toolNames: (tools || []).map((t) => t.function.name),
     });
 
@@ -128,6 +131,13 @@ export class LlmClient {
       });
       if (!resp.ok) {
         const txt = await resp.text().catch(() => "");
+        // A publisher-funded router's plain-text refusal (its free allowance is used
+        // up, say) is written for the visitor, so show it as it is. The trace keeps the
+        // status, and an empty body falls back to the usual message.
+        if (this.publisherFunded && txt.trim() && (resp.headers.get("Content-Type") || "").startsWith("text/plain")) {
+          this.trace?.update(span, { httpStatus: resp.status });
+          throw new Error(txt.slice(0, 300));
+        }
         throw new Error(`LLM HTTP ${resp.status}: ${txt.slice(0, 300)}`);
       }
 
@@ -187,19 +197,14 @@ export class LlmClient {
       }
       if (delta.tool_calls) {
         for (const tc of delta.tool_calls) {
-          let idx = tc.index ?? 0;
-          // [pulse-safety-desk patch] Some OpenAI-compatible providers (Gemini) send
-          // parallel tool calls with the same index but distinct ids. A new id at an
-          // occupied index starts a new call instead of merging names and arguments.
-          if (tc.id && toolCalls[idx] && toolCalls[idx].id && toolCalls[idx].id !== tc.id) {
-            const existing = toolCalls.findIndex((c) => c && c.id === tc.id);
-            idx = existing >= 0 ? existing : toolCalls.length;
-          }
+          const idx = LlmClient.toolCallSlot(toolCalls, tc);
           if (!toolCalls[idx]) toolCalls[idx] = { id: tc.id, type: "function", function: { name: "", arguments: "" } };
-          if (tc.extra_content && !toolCalls[idx].extra_content) toolCalls[idx].extra_content = tc.extra_content;
           if (tc.id) toolCalls[idx].id = tc.id;
           if (tc.function?.name) toolCalls[idx].function.name += tc.function.name;
           if (tc.function?.arguments) toolCalls[idx].function.arguments += tc.function.arguments;
+          // Gemini 3 puts a thought signature here. It rejects the next request unless
+          // the signature comes back on the same call, so keep the field as received.
+          if (tc.extra_content) toolCalls[idx].extra_content = tc.extra_content;
         }
       }
       if (choice.finish_reason) finishReason = choice.finish_reason;
@@ -230,5 +235,23 @@ export class LlmClient {
     }
 
     return { content, toolCalls: toolCalls.filter(Boolean), finishReason, usage, model };
+  }
+
+  /**
+   * Return the slot in toolCalls that one streamed tool-call piece belongs to.
+   *
+   * Most routers number each call with index. Gemini sends each call whole and with no
+   * index, so a piece with a new id starts a new call.
+   *
+   * :param toolCalls: The calls put together so far, one per slot.
+   * :param piece: One entry of a chunk's delta.tool_calls.
+   * :return: The slot number.
+   */
+  static toolCallSlot(toolCalls, piece) {
+    if (Number.isInteger(piece.index)) return piece.index;
+    const last = toolCalls.length - 1;
+    // A piece with no id, or the same id, continues the call before it.
+    if (last >= 0 && (!piece.id || piece.id === toolCalls[last]?.id)) return last;
+    return toolCalls.length;
   }
 }

@@ -1,20 +1,13 @@
-# Changes to the vendored runtime
+# Where this runtime comes from
 
-This folder is the browser runtime from [cognizant-ai-lab/nsdeploy](https://github.com/cognizant-ai-lab/nsdeploy)
-(`nsdeploy/runtime/`, Apache-2.0, see `LICENSE.txt`; upstream commit in `UPSTREAM_COMMIT`).
-These five changes were first made for Pulse Safety Desk (same author) and are reused here. Each change is marked `[pulse-safety-desk patch]` in the code.
+This folder is an unchanged copy of the browser runtime from the Open Agentic Web
+challenge's `agentify-website` skill:
+https://github.com/cognizant-ai-labs/agentic-web/tree/main/skills/agentify-website/runtime
+(agentic-web commit 3ea4b3f 2026-11-23 13:17:09 -0800). That copy is nsdeploy's runtime (Apache-2.0, see LICENSE.txt)
+with the edits its README.md lists: partner sites' shared actions become `website_*`
+tools, partner networks run on the caller's model and step limit, and a
+publisher-funded default router (`llm_router.publisher_funded`).
 
-1. `engine.js`, `llm.js`: a manifest may set `llm_router.publisher_funded: true`, so the site's own
-   default router runs without a visitor key (spec section 4, "Default inference"). Peers inherit it
-   only as the caller's router; a peer manifest can't turn it on.
-2. `runner.js`: an MCP descriptor `{ url, tools: [...] }` now limits the tools an agent sees
-   (spec section 2.1). Before, every tool on the server was offered.
-3. `llm.js`: parallel tool calls that share a stream index but have different ids (as Gemini sends
-   them) are kept apart instead of merged; the provider's `extra_content` (Gemini thought
-   signatures) is kept on each call.
-4. `ui.js`: the page's own key checks (the "API key required" badge, the opened settings and the
-   block on Send) now honor the publisher-funded router from change 1. Before, the engine could run
-   without a visitor key but the page still stopped every visitor and asked for one. The badge reads
-   "Free model · no key needed" instead.
-5. `ui.js`: the Developer view's agent graph printed `[object Object]` for an MCP descriptor
-   `{ url, tools }` (change 2); it now shows the server's host.
+Pocket Web uses this copy because most listed agent sites are built with it. A peer such
+as Recalled? answers through `website_*` tools that the plain nsdeploy runtime does not offer.
+Pocket Web makes no edits here. To update, copy the folder again and run the tests.

@@ -75,6 +75,7 @@ test("Pocket Web's network hands off only to loadable sites and names each one",
   assert.ok(!front.tools.some((t: string) => t.includes("aegisweave")));
   assert.match(front.instructions, /Recalled\? \(tool: recalled_recall_check/);
   assert.match(front.instructions, /Do not answer the question yourself/);
+  assert.match(front.instructions, /Never repeat the person.s question as if it were the site.s answer/);
   assert.equal(n.link_labels["https://chen931222.github.io/recalled/recall_check"], "Recalled?");
 });
 

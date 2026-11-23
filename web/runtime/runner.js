@@ -1,4 +1,5 @@
 // runner.js — the AgentRunner intrinsic.
+// Changed by agentic-web. See README.md in this folder for what changed.
 //
 // Two interchangeable implementations of one agent's LLM tool-calling loop:
 //   * runAgentManual   — a dependency-free reference loop (default).
@@ -10,7 +11,7 @@
 
 import { ChatMessageType, filterSlyData, allowedDownstreamSly, parseExternalAgent } from "./kernel.js";
 import { actionContext, proposalRefs } from "./actions.js";
-import { parseAgentResponse, agentPresentationContext } from "./cruse.js";
+import { parseAgentResponse, agentPresentationContext, normalizePresentation, consolidateIntakePresentations } from "./cruse.js";
 import { applyPendingSteering, runInterruptibleModelCall } from "./turn-control.js";
 import { assertModelForRouter, effectiveModel } from "./model.js";
 
@@ -131,6 +132,29 @@ export function schemaFor(name, fn) {
   };
 }
 
+// Why a registered site action cannot be a website_* tool for this network, or "" when it
+// can. The site decides first: its manifest's actions.agentTools lists the actions its
+// agents may call.
+// - The visitor's own site gets its local-only actions. An irreversible one also needs
+//   the page's confirmation dialog.
+// - A partner network runs on this page, so it never gets this page's actions. It gets
+//   only the actions its own bridge shares with this page's origin, run with the
+//   partner's own code on the partner's origin. A read runs in a hidden frame. A write
+//   runs in the partner's own window, where the visitor confirms it.
+export function websiteToolRefusal(ctx, action) {
+  if (!action) return "no such action is registered for this network";
+  if (!(ctx.manifest?.actions?.agentTools || []).includes(action.name)) return "not listed in the manifest's actions.agentTools";
+  if (!ctx.isTop) {
+    if (action.availability !== "bridge") return "a partner network gets only actions its bridge shares";
+    return "";
+  }
+  if (action.availability !== "local-only") return "not a local-only action";
+  if (action.effect === "irreversible" && typeof ctx.confirmWebsiteActions !== "function") {
+    return "irreversible, and the page has no confirmation dialog";
+  }
+  return "";
+}
+
 // Build the tool table + OpenAI-style schemas for one agent's `tools`.
 export async function buildToolTable(ctx, spec, chain, parentSpan) {
   const { network } = ctx;
@@ -158,11 +182,7 @@ export async function buildToolTable(ctx, spec, chain, parentSpan) {
         }
       }
       const client = await ctx.resolveMcp(ref, parentSpan);
-      // [pulse-safety-desk patch] Spec 2.1: "An MCP descriptor MAY restrict the tool
-      // names exposed to the agent." Honor { url, tools: [...] } instead of exposing all.
-      const onlyTools = typeof ref === "object" && Array.isArray(ref.tools) ? new Set(ref.tools) : null;
       for (const t of await client.listTools(parentSpan)) {
-        if (onlyTools && !onlyTools.has(t.name)) continue;
         const name = safeName(`mcp_${t.name}`);
         toolByName.set(name, { kind: "mcp", ref, client, mcpName: t.name, requiresApproval });
         toolSchemas.push(schemaFor(name, { description: t.description, parameters: t.inputSchema }));
@@ -196,6 +216,33 @@ export async function buildToolTable(ctx, spec, chain, parentSpan) {
       toolByName.set(name, c);
       toolSchemas.push(schemaFor(name, c.spec.function));
     }
+  }
+  // Publisher opt-in: expose selected website actions as model tools. websiteToolRefusal
+  // says which ones this network may call.
+  for (const action of ctx.actions?.catalog({ base: ctx.baseOrigin, network: network.name }) || []) {
+    if (websiteToolRefusal(ctx, action)) continue;
+    const name = `website_${action.name}`;
+    if (toolByName.has(name)) throw new Error(`Duplicate website tool: ${name}`);
+    toolByName.set(name, { kind: "website", ref: action.ref, parallelSafe: false });
+    toolSchemas.push(schemaFor(name, { description: action.description, parameters: action.inputSchema }));
+  }
+  if (network.config?.cruse) {
+    toolByName.set("render_cruse", { kind: "presentation", parallelSafe: false });
+    toolSchemas.push(schemaFor("render_cruse", {
+      description: "Create the CRUSE widgets for this response. Use this to show a consolidated form when several answers are needed, or a table, choice, report or other supported component. Widgets are preserved even if your final answer is plain text. This collects input or presents information; it does not execute website operations.",
+      parameters: {
+        type: "object", required: ["presentation"], additionalProperties: false,
+        properties: {
+          presentation: {
+            type: "object", required: ["version", "components"], additionalProperties: false,
+            properties: {
+              version: { type: "integer", enum: [1] },
+              components: { type: "array", minItems: 1, items: { type: "object" } },
+            },
+          },
+        },
+      },
+    }));
   }
   return { toolByName, toolSchemas };
 }
@@ -300,8 +347,41 @@ export async function executeToolCalls(ctx, calls, parentSpan, chain, { maxConcu
 export async function dispatchToolCall(ctx, entry, args, parentSpan, chain) {
   const { trace } = ctx;
 
+  if (entry.kind === "presentation") {
+    if (!ctx.presentationOutput) throw new Error("No presentation output is available for this invocation.");
+    const normalized = normalizePresentation(args.presentation, ctx.invocation);
+    if (!normalized.presentation || normalized.issues.length) {
+      throw new Error(normalized.issues.join(" ") || "Provide at least one valid CRUSE component.");
+    }
+    const result = { presentation: normalized.presentation };
+    ctx.actions?.validatePresentation(result, ctx.allowedActionRefs || new Set());
+    if (!result.presentation || result.presentationIssues?.length) {
+      throw new Error(result.presentationIssues?.join(" ") || "Invalid CRUSE action binding.");
+    }
+    ctx.presentationOutput.presentation = result.presentation;
+    return { status: "accepted", componentIds: result.presentation.components.map(c => c.id),
+      message: "Widgets are attached to your response. Finish with a brief introduction; do not repeat the form questions in prose. This has not placed an order." };
+  }
+
+  if (entry.kind === "website") {
+    const registered = ctx.actions.entries.get(entry.ref);
+    // The same check that offered the tool, run again when the model calls it.
+    if (!registered || registered.base !== ctx.baseOrigin || registered.network !== ctx.network.name
+      || websiteToolRefusal(ctx, registered)) {
+      throw new Error("Website action is not callable by this agent.");
+    }
+    const plan = ctx.actions.prepare({ kind: "action", action: entry.ref, arguments: args });
+    // A partner's write is confirmed in the partner's own window, not on this page.
+    const confirm = registered.effect === "irreversible" && ctx.isTop
+      ? ctx.confirmWebsiteActions : async () => true;
+    const receipts = await ctx.actions.execute(plan, confirm, crypto.randomUUID());
+    return receipts?.[0] || { action: entry.ref, status: "cancelled", message: "Customer declined; nothing was submitted." };
+  }
+
   if (entry.kind === "agent") {
-    return runAgent(ctx, entry.ref, argsToText(args), parentSpan, chain);
+    const result = await runAgent(ctx, entry.ref, argsToText(args), parentSpan, chain);
+    if (result.presentation) ctx.presentationOutput?.children?.push(result.presentation);
+    return result;
   }
 
   if (entry.kind === "coded") {
@@ -430,13 +510,22 @@ export async function runAgent(ctx, agentName, userText, parentSpan, chain) {
   // ctx: siblings and remote networks can be running concurrently.
   const catalog = ctx.actions?.catalog({ base: ctx.baseOrigin, network: ctx.network.name }) || [];
   const presentationContext = agentPresentationContext(ctx, agentName);
-  const context = presentationContext + (presentationContext && ctx.actions ? actionContext(catalog) : "");
+  // An action that is not a tool here is offered as a proposal instead.
+  const proposalCatalog = catalog.filter(action => websiteToolRefusal(ctx, action));
+  // A partner network that shares no actions gets no note: "report a missing
+  // integration" would be wrong, since another site called it on purpose.
+  const websiteContext = proposalCatalog.length || (!catalog.length && ctx.isTop)
+    ? actionContext(proposalCatalog)
+    : !catalog.length ? ""
+    : "\nWebsite operations are connected as website_* tools. CRUSE forms remain available to collect missing details in one step. Return an ordinary form without submit.actions; its submitted values arrive as CRUSE interaction data on the next turn. Then call the appropriate website tool using those values. A form submission only supplies answers; checkout still requires the tool's browser confirmation. Do not report a missing integration.\n";
+  const context = presentationContext + (presentationContext && ctx.actions ? websiteContext : "");
   const network = Object.create(ctx.network);
   network.getAgentSpec = (name) => {
     const spec = ctx.network.getAgentSpec(name);
     return name === agentName && spec && context ? { ...spec, instructions: `${spec.instructions || ""}\n\n${context}` } : spec;
   };
-  const local = { ...ctx, network, invocation: source.invocation, allowedActionRefs: new Set(catalog.map(a => a.ref)) };
+  const local = { ...ctx, network, invocation: source.invocation,
+    presentationOutput: { presentation: null, children: [] }, allowedActionRefs: new Set(catalog.map(a => a.ref)) };
   const raw = ctx.externalRunner
     ? await ctx.externalRunner(local, agentName, userText, parentSpan, chain, {
       buildToolTable, dispatchToolCall, executeToolCalls, schemaFor, argsToText,
@@ -444,6 +533,10 @@ export async function runAgent(ctx, agentName, userText, parentSpan, chain) {
     })
     : await runAgentManual(local, agentName, userText, parentSpan, chain);
   const result = parseAgentResponse(raw, source);
+  if (!result.presentation) {
+    result.presentation = local.presentationOutput.presentation
+      || consolidateIntakePresentations(local.presentationOutput.children);
+  }
   ctx.actions?.validatePresentation(result, local.allowedActionRefs);
   for (const ref of proposalRefs(result)) ctx.allowedActionRefs?.add(ref);
   ctx.trace.note("presentation_proposal", { parent: parentSpan, ...source, presentation: result.presentation, issues: result.presentationIssues });
@@ -475,7 +568,9 @@ export async function runAgentManual(ctx, agentName, userText, parentSpan, chain
     messages.push({ role: "user", content: userText });
 
     const model = agentModel(ctx, spec);
-    const maxSteps = spec.max_steps || network.config.max_steps || 12;
+    // A partner context carries this site's step limit (engine.js _makeCtx), so a partner
+    // network cannot raise it.
+    const maxSteps = Math.min(spec.max_steps || network.config.max_steps || 12, ctx.maxSteps || Infinity);
 
     let finalText = "";
     for (let step = 0; step < maxSteps; step++) {

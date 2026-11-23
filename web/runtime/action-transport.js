@@ -1,3 +1,4 @@
+// Changed by agentic-web. See README.md in this folder for what changed.
 import { ActionRegistry, cloneData, validateData } from "./actions.js";
 import { registerFormActions, watchHostForms } from "./form-actions.js";
 import { loadDiscoveredActions } from "./discovered-actions.js";
@@ -38,25 +39,34 @@ export function reviewActions(items, title = "Review actions") {
     const dialog = document.createElement("dialog");
     dialog.style.cssText = "max-width:640px;width:85%;max-height:85vh;overflow:auto;border:1px solid #888;border-radius:12px;padding:24px;font:16px system-ui";
     const heading = document.createElement("h2"); heading.textContent = title;
+    // Start at the top of the dialog, on an element that Enter cannot activate.
+    heading.tabIndex = -1; heading.autofocus = true;
     const details = document.createElement("pre"); details.style.cssText = "white-space:pre-wrap;overflow-wrap:anywhere";
     details.textContent = items.map(i => `${i.action} — ${i.origin} (${i.effect})\n${i.description || ""}\n${JSON.stringify(i.arguments, null, 2)}`).join("\n\n");
     const yes = document.createElement("button"); yes.textContent = "Confirm actions";
     const no = document.createElement("button"); no.textContent = "Cancel";
-    const finish = value => { dialog.remove(); resolve(value); };
+    // close() returns focus to where the visitor was, such as the chat input.
+    const finish = value => { dialog.close(); dialog.remove(); resolve(value); };
     yes.onclick = () => finish(true); no.onclick = () => finish(false);
     dialog.addEventListener("cancel", event => { event.preventDefault(); finish(false); });
     dialog.append(heading, details, yes, no); document.body.append(dialog); dialog.showModal();
   });
 }
 
-function openActionWindow(url, signal) {
+// The chat may ask in its own messages before a partner's window opens, naming the
+// partner. The prompt must call window.open in the visitor's click and resolve with it.
+let actionWindowPrompt = null;
+export function setActionWindowPrompt(prompt) { actionWindowPrompt = prompt; }
+
+function openActionWindow(url, signal, brand) {
+  if (actionWindowPrompt) return actionWindowPrompt({ url, origin: new URL(url).origin, brand, signal });
   return new Promise((resolve, reject) => {
     if (signal?.aborted) { reject(new Error("Action was cancelled.")); return; }
     const dialog = document.createElement("dialog");
     const text = document.createElement("p"); text.textContent = `Continue at ${new URL(url).origin} to authorize this action. Sign in there if needed.`;
     const open = document.createElement("button"); open.textContent = "Open action site";
     const cancel = document.createElement("button"); cancel.textContent = "Cancel";
-    const cleanup = () => { dialog.remove(); signal?.removeEventListener("abort", stop); };
+    const cleanup = () => { dialog.close(); dialog.remove(); signal?.removeEventListener("abort", stop); };
     const stop = () => { cleanup(); reject(new Error("Action window cancelled; action not started.")); };
     open.onclick = () => {
       const popup = window.open(url, "_blank", "popup,width=700,height=650");
@@ -71,7 +81,7 @@ function openActionWindow(url, signal) {
 }
 
 export class ActionBridgeClient {
-  constructor(url) { this.url = url; this.pending = new Map(); this.seq = 0; }
+  constructor(url, brand) { this.url = url; this.brand = brand; this.pending = new Map(); this.seq = 0; }
   async connect(popup = false, signal) {
     if (this.port) return;
     const origin = new URL(this.url).origin;
@@ -100,7 +110,7 @@ export class ActionBridgeClient {
     // Attach rejection immediately even while waiting for the user's click.
     ready.catch(() => {});
     try {
-      if (popup) { peer = await openActionWindow(this.url, signal); this.popup = peer; }
+      if (popup) { peer = await openActionWindow(this.url, signal, this.brand); this.popup = peer; }
       else {
         this.frame = document.createElement("iframe");
         this.frame.hidden = true; this.frame.title = "Site action bridge";
@@ -136,14 +146,14 @@ export async function registerRemoteActions(registry, scope, manifest) {
   registry.remoteLoads ||= new Map();
   const key = `${scope.base}::${scope.network}`;
   if (registry.remoteLoads.has(key)) return registry.remoteLoads.get(key);
-  const loading = discoverRemoteActions(registry, scope, url);
+  const loading = discoverRemoteActions(registry, scope, url, manifest.brand);
   registry.remoteLoads.set(key, loading);
   try { await loading; } catch (error) { registry.remoteLoads.delete(key); throw error; }
   finally { registry.onChange?.(); }
 }
 
-async function discoverRemoteActions(registry, scope, url) {
-  const client = new ActionBridgeClient(url);
+async function discoverRemoteActions(registry, scope, url, brand) {
+  const client = new ActionBridgeClient(url, brand);
   const registered = [];
   try {
     try { await client.connect(); }
@@ -154,7 +164,7 @@ async function discoverRemoteActions(registry, scope, url) {
     for (const definition of catalog) registered.push(registry.register(scope, definition, async (args, { requestId, signal }) => {
       // Mutations are approved on the owning origin in a top-level window. The
       // receiving bridge enforces this independently of the caller's catalog.
-      const executor = new ActionBridgeClient(url);
+      const executor = new ActionBridgeClient(url, brand);
       const abort = () => executor.dispose();
       signal?.addEventListener("abort", abort, { once: true });
       try {
@@ -209,7 +219,8 @@ export async function serveActionBridge() {
         validateData(entry.inputSchema, request.args);
         busy = true;
         try {
-          if (entry.effect !== "read" && !await reviewActions([{ action: entry.name, description: entry.description, origin: location.origin, effect: entry.effect, arguments: request.args }], `Request from ${caller}`)) throw new Error("User declined; action not started.");
+          // An action that shows its own confirmation in this window skips the generic dialog.
+          if (entry.effect !== "read" && !entry.confirmsInWindow && !await reviewActions([{ action: entry.name, description: entry.description, origin: location.origin, effect: entry.effect, arguments: request.args }], `Request from ${caller}`)) throw new Error("User declined; action not started.");
           seen.add(request.requestId);
           const value = cloneData(await entry.execute(request.args, { requestId: request.requestId, callerOrigin: caller }));
           if (entry.outputSchema) validateData(entry.outputSchema, value, "result");

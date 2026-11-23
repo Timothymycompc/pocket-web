@@ -1,0 +1,40 @@
+[
+  {
+    "name": "Shutdown Clerk",
+    "peerUrl": "https://shutdown-clerk.pages.dev/shutdown_clerk",
+    "question": "What breaks in vercel/nextjs-subscription-payments before March 2027?",
+    "seconds": 10,
+    "answer": "Error from tool 'shutdown_clerk': document is not defined",
+    "errors": [
+      "tool shutdown_clerk: document is not defined",
+      "remote_fetch : document is not defined"
+    ],
+    "consents": [
+      "shutdown-clerk.pages.dev (network)"
+    ],
+    "toolCalls": [
+      "tool:shutdown_clerk:error"
+    ]
+  },
+  {
+    "name": "Plainly (agentic edition)",
+    "peerUrl": "https://sainath998.github.io/plainly-agent/plainly_document_helper",
+    "question": "Load the bank sample and tell me what I need to do and by when.",
+    "seconds": 13,
+    "answer": "",
+    "errors": [
+      "LLM HTTP 503: [{\n  \"error\": {\n    \"code\": 503,\n    \"message\": \"This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later.\",\n    \"status\": \"UNAVAILABLE\"\n  }\n}\n]",
+      "run : LLM HTTP 503: [{\n  \"error\": {\n    \"code\": 503,\n    \"message\": \"This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later.\",\n    \"status\": \"UNAVAI",
+      "agent caller: LLM HTTP 503: [{\n  \"error\": {\n    \"code\": 503,\n    \"message\": \"This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later.\",\n    \"status\": \"UNAVAI",
+      "tool plainly_agent_plainly_document_helper: document is not defined",
+      "remote_fetch : document is not defined",
+      "model_call : LLM HTTP 503: [{\n  \"error\": {\n    \"code\": 503,\n    \"message\": \"This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later.\",\n    \"status\": \"UNAVAI"
+    ],
+    "consents": [
+      "sainath998.github.io (network)"
+    ],
+    "toolCalls": [
+      "tool:plainly_agent_plainly_document_helper:error"
+    ]
+  }
+]

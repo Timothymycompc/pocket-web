@@ -1,0 +1,723 @@
+[
+  {
+    "site": "https://worldwideagenticweb.org/",
+    "name": "The Open Agentic Web Challenge",
+    "description": "Answers questions about the Open Agentic Web and how to participate in the challenge.",
+    "team": "-",
+    "agentLink": "https://worldwideagenticweb.org/wp-content/plugins/wwaw-agent-widget/assets/worldwide_agentic_web_widget/v1.0.9/worldwide_agentic_web_widget.network.json",
+    "ok": false,
+    "problems": [
+      "manifest has no CORS header",
+      "network file has no CORS header"
+    ],
+    "base": "https://worldwideagenticweb.org/wp-content/plugins/wwaw-agent-widget/assets/worldwide_agentic_web_widget/v1.0.9",
+    "requested": "worldwide_agentic_web_widget",
+    "manifestStatus": 200,
+    "manifestCors": null,
+    "network": "worldwide_agentic_web_widget",
+    "frontMan": "worldwide_agentic_web_guide",
+    "sampleQueries": [
+      "What is the World Wide Agentic Web initiative?",
+      "What are the dates, prize, tracks, and project areas for the challenge?",
+      "How can I pre-register, subscribe, or discuss a partnership?",
+      "Where are the workshop and technical resources?"
+    ],
+    "netDescription": "Answers questions about the World Wide Agentic Web and routes detailed questions to grounded specialists.",
+    "peerPolicy": "open",
+    "router": "https://api.openai.com/v1",
+    "networkStatus": 200,
+    "networkCors": null,
+    "tools": {
+      "agents": 4,
+      "mcp": [],
+      "remote": [],
+      "links": [],
+      "coded": 0,
+      "toolbox": 0
+    }
+  },
+  {
+    "site": "https://shutdown-clerk.pages.dev/",
+    "name": "Shutdown Clerk",
+    "description": "Answers what breaks in a public GitHub repository before a vendor shutdown or breaking release, with file:line evidence and fix steps. Runs a small model in the visitor's browser; callable by peers.",
+    "team": "-",
+    "agentLink": "https://shutdown-clerk.pages.dev/shutdown_clerk.network.json",
+    "ok": true,
+    "problems": [],
+    "base": "https://shutdown-clerk.pages.dev",
+    "requested": "shutdown_clerk",
+    "manifestStatus": 200,
+    "manifestCors": "*",
+    "network": "shutdown_clerk",
+    "frontMan": "shutdown_clerk",
+    "sampleQueries": [
+      "What breaks in vercel/nextjs-subscription-payments before March 2027?",
+      "Which shutdowns and breaking releases are still ahead this year?",
+      "Scan kpi-ua/schedule.kpi.ua and tell me what to fix first.",
+      "What is the Open Agentic Web Challenge and how do I take part?",
+      "Can you open a pull request with the fixes for me?"
+    ],
+    "netDescription": "Ask what breaks in a public GitHub repository before a vendor shutdown or breaking release. Agents in your browser read the repo, answer with file:line evidence and the official source, and plan the fixes.",
+    "peerPolicy": "closed",
+    "router": "browser://local",
+    "networkStatus": 200,
+    "networkCors": "*",
+    "tools": {
+      "agents": 4,
+      "mcp": [],
+      "remote": [
+        "https://worldwideagenticweb.org/wp-content/plugins/wwaw-agent-widget/assets/worldwide_agentic_web_widget/v1.0.9/worldwide_agentic_web_widget"
+      ],
+      "links": [],
+      "coded": 0,
+      "toolbox": 0
+    }
+  },
+  {
+    "site": "https://sainath998.github.io/plainly-agent/",
+    "name": "Plainly (agentic edition)",
+    "description": "Explains bank letters, bills, rental agreements and lab reports in plain words. Agents only ever see a redacted copy, and run on Gemini Nano in the visitor's browser (no key).",
+    "team": "Sainath",
+    "agentLink": "https://sainath998.github.io/plainly-agent/plainly_document_helper.network.json",
+    "ok": true,
+    "problems": [],
+    "base": "https://sainath998.github.io/plainly-agent",
+    "requested": "plainly_document_helper",
+    "manifestStatus": 200,
+    "manifestCors": "*",
+    "network": "plainly_document_helper",
+    "frontMan": "document_helper",
+    "sampleQueries": [
+      "Load the bank sample and tell me what I need to do and by when.",
+      "Pin a checklist of what I need to do.",
+      "Where can I complain if my bank freezes my account?",
+      "Is a deposit of two months' rent normal?",
+      "Can you send this letter to my bank for me?"
+    ],
+    "netDescription": "Paste a bank letter, lab report, rental agreement or bill, and get it explained in plain words. Your personal details are hidden before any agent reads it.",
+    "peerPolicy": "closed",
+    "router": "https://api.otari.ai/api/v1",
+    "networkStatus": 200,
+    "networkCors": "*",
+    "tools": {
+      "agents": 2,
+      "mcp": [],
+      "remote": [],
+      "links": [],
+      "coded": 0,
+      "toolbox": 0
+    }
+  },
+  {
+    "site": "https://montbaga.github.io/agent-customs/",
+    "name": "Agent Customs",
+    "description": "Checks another site's AI agents for hidden tricks before they run in your browser, and adds the same check to any agentic site with one folder and two lines.",
+    "team": "Monty Bagati",
+    "agentLink": "https://montbaga.github.io/agent-customs/agent_customs.network.json",
+    "ok": true,
+    "problems": [],
+    "base": "https://montbaga.github.io/agent-customs",
+    "requested": "agent_customs",
+    "manifestStatus": 200,
+    "manifestCors": "*",
+    "network": "agent_customs",
+    "frontMan": "customs_officer",
+    "sampleQueries": [
+      "Inspect https://agent-customs-range.github.io/shady_pizza/shady_pizza and explain the verdict in plain words.",
+      "What does the Sunny Bakery test network offer? Ask it.",
+      "Compare https://agent-customs-range.github.io/sunny_bakery/sunny_bakery with https://agent-customs-range.github.io/rugpull/sunny_bakery.",
+      "Inspect https://agent-customs-range.github.io/bank_helper/bank_helper and tell me what the publisher should fix.",
+      "Can you certify my network as safe for everyone?"
+    ],
+    "netDescription": "Border control for the Open Agentic Web: inspect any agent network before it runs in your browser.",
+    "peerPolicy": "closed",
+    "router": "https://api.otari.ai/api/v1",
+    "networkStatus": 200,
+    "networkCors": "*",
+    "tools": {
+      "agents": 2,
+      "mcp": [],
+      "remote": [
+        "https://agent-customs-range.github.io/sunny_bakery/sunny_bakery",
+        "https://agent-customs-range.github.io/shady_pizza/shady_pizza"
+      ],
+      "links": [],
+      "coded": 0,
+      "toolbox": 0
+    }
+  },
+  {
+    "site": "https://agent-atlas-phi.vercel.app/",
+    "name": "Agent Atlas",
+    "description": "Directory and trust checker for the open agentic web: finds agentic websites by what they do and checks a site's spec conformance, the origins its agents contact and whether other sites can call it. Also an MCP server.",
+    "team": "Agent Atlas",
+    "agentLink": "https://agent-atlas-phi.vercel.app/agent_atlas",
+    "ok": true,
+    "problems": [],
+    "base": "https://agent-atlas-phi.vercel.app",
+    "requested": "agent_atlas",
+    "manifestStatus": 200,
+    "manifestCors": "*",
+    "network": "agent_atlas",
+    "frontMan": "atlas_guide",
+    "sampleQueries": [
+      "Is there an agentic website that books boat tours? Is it safe to link to?",
+      "Check https://example.com/my_network against the spec and tell me what to fix.",
+      "Which sites in the directory are fully conformant?",
+      "Compare the two sites that sell food and tell me which one I could call from my own site.",
+      "Book me a table at a restaurant."
+    ],
+    "netDescription": "Ask Atlas to find agentic websites by what they do, or to check a site before you link to it. Add your AI provider key in the settings to start.",
+    "peerPolicy": "closed",
+    "router": "https://api.otari.ai/api/v1",
+    "networkStatus": 200,
+    "networkCors": "*",
+    "tools": {
+      "agents": 1,
+      "mcp": [
+        "agent-atlas-phi.vercel.app"
+      ],
+      "remote": [],
+      "links": [],
+      "coded": 0,
+      "toolbox": 0
+    }
+  },
+  {
+    "site": "https://ledenti.github.io/trois-nombres/",
+    "name": "Three Numbers",
+    "description": "Before you deal with someone, read their XRPL key: how many escrow commitments it signed, kept and let expire, read live from the ledger, and what those numbers cannot prove. No server, no verdict; callable by peers through a public read-only MCP service.",
+    "team": "matter-x-",
+    "agentLink": "https://ledenti.github.io/trois-nombres/three_numbers.network.json",
+    "ok": true,
+    "problems": [],
+    "base": "https://ledenti.github.io/trois-nombres",
+    "requested": "three_numbers",
+    "manifestStatus": 200,
+    "manifestCors": "*",
+    "network": "three_numbers",
+    "frontMan": "reader",
+    "sampleQueries": [
+      "What is the track record of rGJsjkfmASA2ezXYDpTQJZDp9tRgCJAPhw on testnet?",
+      "Show the example key on the page.",
+      "What does expired mean here, and does it prove someone cheated?",
+      "Who owns rGJsjkfmASA2ezXYDpTQJZDp9tRgCJAPhw?"
+    ],
+    "netDescription": "Ask about any XRPL key's public track record: how many commitments it signed, kept and let expire, read live from the ledger.",
+    "peerPolicy": "closed",
+    "router": "https://api.otari.ai/api/v1",
+    "networkStatus": 200,
+    "networkCors": "*",
+    "tools": {
+      "agents": 3,
+      "mcp": [
+        "three-numbers-mcp.onrender.com"
+      ],
+      "remote": [
+        "https://rule-in-force.onrender.com/rule_in_force"
+      ],
+      "links": [],
+      "coded": 0,
+      "toolbox": 0
+    }
+  },
+  {
+    "site": "https://cocvn157.github.io/nanda-seal/",
+    "name": "NandaSeal Trust Studio",
+    "description": "Signs and verifies Open Agentic Web manifests (`agent-manifest.json` + `.network.json`) in the browser using Web Crypto ECDSA P-256 `AgentFacts`, detects 1-byte tampering, audits MVP Profile 0.2 conformance, and offers a 2-line `<nanda-seal>` badge component.",
+    "team": "`@cocvn157`",
+    "agentLink": "https://cocvn157.github.io/nanda-seal/nanda_seal_verifier.network.json",
+    "ok": true,
+    "problems": [],
+    "base": "https://cocvn157.github.io/nanda-seal",
+    "requested": "nanda_seal_verifier",
+    "manifestStatus": 200,
+    "manifestCors": "*",
+    "network": "nanda_seal_verifier",
+    "frontMan": "trust_coordinator",
+    "sampleQueries": [
+      "Verify NandaSeal's own cryptographic AgentFacts seal right now.",
+      "Run a 1-byte tamper simulation to show how Web Crypto detects manifest modification.",
+      "Audit https://worldwideagenticweb.org/ for Open Agentic Web MVP 0.3 conformance.",
+      "How do I embed the <nanda-seal> Web Component on my agentic website?"
+    ],
+    "netDescription": "Cryptographic AgentFacts verifier, MVP Profile 0.3 conformance auditor, and peer trust boundary inspector for the Open Agentic Web.",
+    "peerPolicy": "allowlist",
+    "router": "https://api.otari.ai/api/v1",
+    "networkStatus": 200,
+    "networkCors": "*",
+    "tools": {
+      "agents": 4,
+      "mcp": [],
+      "remote": [],
+      "links": [],
+      "coded": 0,
+      "toolbox": 0
+    }
+  },
+  {
+    "site": "https://deadline-desk-agent.vercel.app/",
+    "name": "Deadline Desk",
+    "description": "A board of prize contests and hackathons you can still enter: filters by category, language, AI policy, prize and deadline, keeps a shortlist and plans start, draft and submit dates back from each deadline. Callable by peers: its bridge shares three read actions, with a read-only MCP service behind them.",
+    "team": "Class-now",
+    "agentLink": "https://deadline-desk-agent.vercel.app/deadline_desk.network.json",
+    "ok": true,
+    "problems": [],
+    "base": "https://deadline-desk-agent.vercel.app",
+    "requested": "deadline_desk",
+    "manifestStatus": 200,
+    "manifestCors": "*",
+    "network": "deadline_desk",
+    "frontMan": "deadline_desk_assistant",
+    "sampleQueries": [
+      "Which hackathons that allow generative AI close in the next four weeks?",
+      "Show me English writing or essay prizes with a top prize of at least $1,000.",
+      "Add the Open Agentic Web Challenge to my shortlist and plan when I should start.",
+      "I have three calls on my shortlist. Do any of their submit dates clash?",
+      "Can you submit my entry to the contest for me?"
+    ],
+    "netDescription": "Find open prize contests and hackathons you can still enter, shortlist them and get a back-planned schedule.",
+    "peerPolicy": "closed",
+    "router": "https://api.otari.ai/api/v1",
+    "networkStatus": 200,
+    "networkCors": "*",
+    "tools": {
+      "agents": 2,
+      "mcp": [
+        "deadline-desk-agent.vercel.app"
+      ],
+      "remote": [],
+      "links": [],
+      "coded": 0,
+      "toolbox": 0
+    }
+  },
+  {
+    "site": "https://d3c7h3snp0n4hj.cloudfront.net/",
+    "name": "Agent Crash Test",
+    "description": "Runs a model that says yes to everything against an agentic website, on its own page, as a dry run, and reports which site actions run without asking the visitor and which sites the model tried to contact. No AI key needed. Two demo shops show what three labels change; one line runs it on your own site; callable by peers.",
+    "team": "Mohammed Abadi",
+    "agentLink": "https://d3c7h3snp0n4hj.cloudfront.net/agent_crash_test.network.json",
+    "ok": true,
+    "problems": [],
+    "base": "https://d3c7h3snp0n4hj.cloudfront.net",
+    "requested": "agent_crash_test",
+    "manifestStatus": 200,
+    "manifestCors": "*",
+    "network": "agent_crash_test",
+    "frontMan": "crash_test_guide",
+    "sampleQueries": [
+      "What does the crash test tell me that reading my network file does not?",
+      "Run the crash test on the weak demo shop and explain the result.",
+      "Now run it on the fixed shop. What changed, and why?",
+      "How do I run it on my own site?",
+      "Can you certify my site as safe?"
+    ],
+    "netDescription": "Ask what your agentic website lets a model do without asking the visitor, run the crash test on a demo shop, and learn how to test your own site.",
+    "peerPolicy": "closed",
+    "router": "https://api.otari.ai/api/v1",
+    "networkStatus": 200,
+    "networkCors": "*",
+    "tools": {
+      "agents": 2,
+      "mcp": [],
+      "remote": [],
+      "links": [],
+      "coded": 0,
+      "toolbox": 0
+    }
+  },
+  {
+    "site": "https://cocvn157.github.io/scopegate-studio/",
+    "name": "ScopeGate Studio",
+    "description": "Runtime egress firewall, isolated Web Worker + MessageChannel micro-sandbox, sly_data boundary filter, HITL write consent gate, hash-chained ECDSA audit ledger, and WebMCP / action-bridge capability broker (MVP Profile 0.3).",
+    "team": "`@cocvn157`",
+    "agentLink": "https://cocvn157.github.io/scopegate-studio/scopegate_broker.network.json",
+    "ok": true,
+    "problems": [],
+    "base": "https://cocvn157.github.io/scopegate-studio",
+    "requested": "scopegate_broker",
+    "manifestStatus": 200,
+    "manifestCors": "*",
+    "network": "scopegate_broker",
+    "frontMan": "gatekeeper_broker",
+    "sampleQueries": [
+      "Evaluate an outbound peer call against ScopeGate's egress firewall and sly_data filter.",
+      "Run a rogue coded-tool egress attack inside the isolated Web Worker sandbox.",
+      "Simulate a composition depth and step-budget overflow tripwire.",
+      "Inspect ScopeGate's live WebMCP and action-bridge capabilities."
+    ],
+    "netDescription": "Runtime egress firewall, isolated coded-tool Web Worker sandbox, sly_data boundary filter, and cross-site capability broker for the Open Agentic Web (MVP Profile 0.3).",
+    "peerPolicy": "allowlist",
+    "router": "https://api.otari.ai/api/v1",
+    "networkStatus": 200,
+    "networkCors": "*",
+    "tools": {
+      "agents": 4,
+      "mcp": [],
+      "remote": [],
+      "links": [],
+      "coded": 0,
+      "toolbox": 0
+    }
+  },
+  {
+    "site": "https://cocvn157.github.io/meshweave-studio/",
+    "name": "MeshWeave Studio",
+    "description": "Cross-site Open Agentic Web workflow DAG composer, live ActionBridgeClient MessageChannel runner, partner bridge contract & interop matrix prober, and composable .network.json topology compiler (MVP Profile 0.3).",
+    "team": "`@cocvn157`",
+    "agentLink": "https://cocvn157.github.io/meshweave-studio/meshweave_composer.network.json",
+    "ok": true,
+    "problems": [],
+    "base": "https://cocvn157.github.io/meshweave-studio",
+    "requested": "meshweave_composer",
+    "manifestStatus": 200,
+    "manifestCors": "*",
+    "network": "meshweave_composer",
+    "frontMan": "mesh_orchestrator",
+    "sampleQueries": [
+      "Compose and run a 3-origin MessageChannel DAG across ScopeGate, NandaSeal, and MeshWeave.",
+      "Probe all Open Agentic Web partner websites for bridge framing, CORS, and catalog schemas.",
+      "Validate whether upstream hop outputs satisfy downstream bridge action inputSchema contracts.",
+      "Export a compiled MVP Profile 0.3 .network.json, agent-manifest.json, and trace digest."
+    ],
+    "netDescription": "Cross-Site Open Agentic Web Workflow DAG Composer, Live Action-Bridge MessageChannel Runner, Interop Matrix Prober, and Composable .network.json Generator (MVP Profile 0.3).",
+    "peerPolicy": "allowlist",
+    "router": "https://api.otari.ai/api/v1",
+    "networkStatus": 200,
+    "networkCors": "*",
+    "tools": {
+      "agents": 4,
+      "mcp": [],
+      "remote": [
+        "https://cocvn157.github.io/scopegate-studio/scopegate_broker",
+        "https://cocvn157.github.io/nanda-seal/nanda_seal_verifier"
+      ],
+      "links": [],
+      "coded": 0,
+      "toolbox": 0
+    }
+  },
+  {
+    "site": "https://retrofit.thecreativetoken.com/",
+    "name": "Retrofit",
+    "description": "Paste the address of a public website: Retrofit scores how ready it is for AI agents, says what to fix first, and builds a working agent for it from a saved copy of its public pages. The agent runs in your browser and answers with source links, on free AI or your own key. Callable by peers: its guide agent can score a site.",
+    "team": "juan294",
+    "agentLink": "https://retrofit.thecreativetoken.com/retrofit_guide.network.json",
+    "ok": true,
+    "problems": [],
+    "base": "https://retrofit.thecreativetoken.com",
+    "requested": "retrofit_guide",
+    "manifestStatus": 200,
+    "manifestCors": "*",
+    "network": "retrofit_guide",
+    "frontMan": "retrofit_guide",
+    "sampleQueries": [
+      "What does Retrofit do?",
+      "What is the open agentic web?",
+      "How ready is example.com for AI agents?",
+      "What should I fix first on my site?"
+    ],
+    "netDescription": "Ask about Retrofit and the open agentic web, or how ready a public website is for AI agents.",
+    "peerPolicy": "closed",
+    "router": "https://retrofit.thecreativetoken.com/api/inference/v1",
+    "networkStatus": 200,
+    "networkCors": "*",
+    "tools": {
+      "agents": 2,
+      "mcp": [],
+      "remote": [
+        "https://demo-harbor.thecreativetoken.com/harbor_tours"
+      ],
+      "links": [],
+      "coded": 0,
+      "toolbox": 0
+    }
+  },
+  {
+    "site": "https://citation-mirror.vercel.app/",
+    "name": "Citation Mirror",
+    "description": "Does your AI cite its own kind? Runs a preregistered citation-bias test live on the model the visitor picks, on their own key, and shows kin preference and position bias next to the AI Citation Bias Index. Callable by peers: a called network runs on the caller's model, so its shared spot check audits the model the calling site runs on.",
+    "team": "frostyhand",
+    "agentLink": "https://citation-mirror.vercel.app/citation_mirror.network.json",
+    "ok": true,
+    "problems": [],
+    "base": "https://citation-mirror.vercel.app",
+    "requested": "citation_mirror",
+    "manifestStatus": 200,
+    "manifestCors": "*",
+    "network": "citation_mirror",
+    "frontMan": "citation_mirror",
+    "sampleQueries": [
+      "Which models in the Index favour pages written by their own developer?",
+      "Test the model I am using now with a quick check.",
+      "Run a spot check on the model you are running on.",
+      "How does the test work, and what can it not tell me?",
+      "Can you tell me if this model is accurate?"
+    ],
+    "netDescription": "Tests whether your AI model cites web pages written by its own developer's model, or by whoever is listed first, and compares it with the AI Citation Bias Index.",
+    "peerPolicy": "closed",
+    "router": "https://api.otari.ai/api/v1",
+    "networkStatus": 200,
+    "networkCors": "*",
+    "tools": {
+      "agents": 3,
+      "mcp": [],
+      "remote": [],
+      "links": [],
+      "coded": 0,
+      "toolbox": 0
+    }
+  },
+  {
+    "site": "https://spare-hours-agent.vercel.app/",
+    "name": "Spare Hours",
+    "description": "Checks whether a contest entry or side project fits the free hours in your week, and gives the day to start. Calls Deadline Desk, after a consent card, and tests its open calls against your own week. Callable by peers: its bridge shares an effort calculator.",
+    "team": "Class-now",
+    "agentLink": "https://spare-hours-agent.vercel.app/spare_hours.network.json",
+    "ok": true,
+    "problems": [],
+    "base": "https://spare-hours-agent.vercel.app",
+    "requested": "spare_hours",
+    "manifestStatus": 200,
+    "manifestCors": "*",
+    "network": "spare_hours",
+    "frontMan": "spare_hours_assistant",
+    "sampleQueries": [
+      "I have 11 free hours a week. Could I finish a hackathon project that is due in six weeks?",
+      "Ask Deadline Desk which hackathons that allow generative AI close in the next eight weeks, and tell me which ones fit my week.",
+      "Make my Saturdays 5 hours and my Wednesdays 0.",
+      "Add an essay prize entry due in four weeks, and tell me if everything still fits.",
+      "Can you put these in my Google Calendar and remind me?"
+    ],
+    "netDescription": "See whether a contest entry or side project fits the free hours in your week, and ask Deadline Desk what is open.",
+    "peerPolicy": "closed",
+    "router": "https://api.otari.ai/api/v1",
+    "networkStatus": 200,
+    "networkCors": "*",
+    "tools": {
+      "agents": 1,
+      "mcp": [],
+      "remote": [
+        "https://deadline-desk-agent.vercel.app/deadline_desk"
+      ],
+      "links": [],
+      "coded": 0,
+      "toolbox": 0
+    }
+  },
+  {
+    "site": "https://bacajelas-agentic.web.app/",
+    "name": "BacaJelas",
+    "description": "A friendly reading companion for Indonesian ↔ English readers: four named agents (Rani, Sari, Alih, Rara) simplify, translate and summarise in the visitor's browser, with personal text held back by a deny-by-default sly_data policy and a written receipt for every run. Composes live in both directions: Rani visits Deadline Desk after a consent card and brings back live board answers; a second-origin porch site calls BacaJelas in return. Also ships an open-source network validator for the community.",
+    "team": "arizkis",
+    "agentLink": "https://bacajelas-agentic.web.app/bacajelas.network.json",
+    "ok": true,
+    "problems": [],
+    "base": "https://bacajelas-agentic.web.app",
+    "requested": "bacajelas",
+    "manifestStatus": 200,
+    "manifestCors": "*",
+    "network": "bacajelas",
+    "frontMan": "rani",
+    "sampleQueries": [
+      "Please simplify this paragraph so a 12-year-old can follow it.",
+      "Translate this Indonesian letter into friendly, natural English.",
+      "Summarise this long article into five kind bullet points.",
+      "This text is personal — explain it simply, and please keep it just between us."
+    ],
+    "netDescription": "A friendly reading companion: Rani welcomes you and routes your text to specialist friends — Sari simplifies, Alih translates ID<->EN, Rara summarises. Personal text never leaves your browser.",
+    "peerPolicy": "ask",
+    "router": "https://api.otari.ai/api/v1",
+    "networkStatus": 200,
+    "networkCors": "*",
+    "tools": {
+      "agents": 4,
+      "mcp": [],
+      "remote": [],
+      "links": [],
+      "coded": 0,
+      "toolbox": 0
+    }
+  },
+  {
+    "site": "https://overlap-ana.vercel.app/",
+    "name": "Overlap",
+    "description": "Find a meeting time across companies without anyone sharing a calendar. Each person's page answers other agents only yes or no for exact times, within daily and weekly limits its own server enforces, and checks a signature that proves which page is asking. Three demo pages on three origins call each other after consent cards; callable by peers: its bridge checks times and sends a meeting request that opens on the person's own page.",
+    "team": "waterdoog",
+    "agentLink": "https://overlap-ana.vercel.app/overlap_pass.network.json",
+    "ok": true,
+    "problems": [],
+    "base": "https://overlap-ana.vercel.app",
+    "requested": "overlap_pass",
+    "manifestStatus": 200,
+    "manifestCors": "*",
+    "network": "overlap_pass",
+    "frontMan": "pass_agent",
+    "sampleQueries": [
+      "Is this person free on 2026-11-26 from 14:30 to 15:00 UTC or 15:30 to 16:00 UTC, for a 30 minute pricing sync?",
+      "Send a meeting request for 2026-11-26 14:30-15:00 UTC titled Pricing sync.",
+      "What is the status of request OV-3F2A1C?",
+      "Show me their whole calendar for next week."
+    ],
+    "netDescription": "Ask whether this person is free at exact times, and send them a meeting request. Their calendar is never shared.",
+    "peerPolicy": "closed",
+    "router": "https://api.otari.ai/api/v1",
+    "networkStatus": 200,
+    "networkCors": "*",
+    "tools": {
+      "agents": 1,
+      "mcp": [],
+      "remote": [],
+      "links": [],
+      "coded": 0,
+      "toolbox": 0
+    }
+  },
+  {
+    "site": "https://pecopeko.github.io/aegisweave/",
+    "name": "AegisWeave",
+    "description": "Policy-bound sealed-bid multi-agent procurement, destination-scoped sly_data firewall, SHA-256 artifact pinning, and 15-check MVP Profile 0.3 conformance auditor running 100% in the visitor browser.",
+    "team": "peco",
+    "agentLink": "https://pecopeko.github.io/aegisweave/aegisweave_hub.network.json",
+    "ok": true,
+    "problems": [],
+    "base": "https://pecopeko.github.io/aegisweave",
+    "requested": "aegisweave_hub",
+    "manifestStatus": 200,
+    "manifestCors": "*",
+    "network": "aegisweave_hub",
+    "frontMan": "procurement_concierge",
+    "sampleQueries": [
+      "Compare quotes from Nordic Compute and Kyoto Studio for an urgent GPU + localization sprint under $480 with >= 99.5% SLA, and issue a SHA-256 mandate receipt.",
+      "Audit the peer network at ./peers/nordic_compute/nordic_compute for MVP Profile 0.3 conformance and prompt safety.",
+      "Test our firewall against the adversarial peer at ./peers/rogue_peer/rogue_peer — verify BYOK key isolation, sly_data blocking, and cycle protection.",
+      "Run the 7-check MVP Profile 0.3 Interoperability Suite and show the live CRUSE compliance table and chart."
+    ],
+    "netDescription": "Policy-bound multi-agent procurement, sealed-bid arbitration, destination-scoped sly_data firewall, and MVP Profile 0.3 peer conformance auditor running 100% in the browser.",
+    "peerPolicy": "allow-with-consent",
+    "router": "local-browser://aegisweave-deterministic-v1",
+    "networkStatus": 200,
+    "networkCors": "*",
+    "tools": {
+      "agents": 4,
+      "mcp": [],
+      "remote": [],
+      "links": [
+        "nordic_compute",
+        "kyoto_studio",
+        "website_create_spending_mandate",
+        "website_evaluate_sealed_bids",
+        "website_issue_settlement_receipt",
+        "website_list_receipts",
+        "website_audit_peer_manifest"
+      ],
+      "coded": 0,
+      "toolbox": 0
+    }
+  },
+  {
+    "site": "https://factgate.vercel.app/",
+    "name": "FactGate",
+    "description": "Checks a site, NANDA-listed agent or x402 seller before your agent links to it or pays it: does it answer as declared, does its ERC-8004 wallet match the payee, did paid calls deliver. Code returns ALLOW, CAUTION or BLOCK; the model only explains. Each destination asks first. One file puts the same gate in front of any agentic site; callable by peers.",
+    "team": "kzmttkc",
+    "agentLink": "https://factgate.vercel.app/factgate.network.json",
+    "ok": true,
+    "problems": [],
+    "base": "https://factgate.vercel.app",
+    "requested": "factgate",
+    "manifestStatus": 200,
+    "manifestCors": "*",
+    "network": "factgate",
+    "frontMan": "gate_coordinator",
+    "sampleQueries": [
+      "Should my agent pay https://agent402.tools/api/weather-forecast? Give FactGate's verdict with the reasons.",
+      "Does https://agent-atlas-phi.vercel.app/agent_atlas answer as its manifest declares? Check its MCP server too.",
+      "Whose wallet is behind https://agent402.tools/api/weather-forecast? Compare its payTo with its ERC-8004 registration.",
+      "How does FactGate decide between ALLOW, CAUTION and BLOCK?",
+      "Pay this seller for me."
+    ],
+    "netDescription": "Check an agent website or x402 seller before you connect or pay: live answers, ERC-8004 identity on chain, vet402 delivery records. ALLOW, CAUTION or BLOCK with the reasons, plus AgentFacts.",
+    "peerPolicy": "closed",
+    "router": "https://api.otari.ai/api/v1",
+    "networkStatus": 200,
+    "networkCors": "*",
+    "tools": {
+      "agents": 4,
+      "mcp": [
+        "vet402.com"
+      ],
+      "remote": [],
+      "links": [],
+      "coded": 0,
+      "toolbox": 0
+    }
+  },
+  {
+    "site": "https://chen931222.github.io/recalled/",
+    "name": "Recalled?",
+    "description": "Before you buy or list second-hand baby gear, check it against 3,339 U.S. CPSC and Health Canada recall notices: likely recalled, possible match or no match found (never \"safe\"), with the hazard, what to do and the official link. The check needs no AI key; the assistant answers only from the notices. Callable by peers: its bridge shares three reads with every site, and a demo resale site on a second origin asks it after a consent card before publishing a listing.",
+    "team": "Chen931222",
+    "agentLink": "https://chen931222.github.io/recalled/recall_check.network.json",
+    "ok": true,
+    "problems": [],
+    "base": "https://chen931222.github.io/recalled",
+    "requested": "recall_check",
+    "manifestStatus": 200,
+    "manifestCors": "*",
+    "network": "recall_check",
+    "frontMan": "recall_checker",
+    "sampleQueries": [
+      "Was the Graco Quattro Tour stroller recalled?",
+      "I am selling a Pearhead learning set, model 87150. Is it recalled?",
+      "Check UPC 698904871507",
+      "Is this crib safe to buy?",
+      "Which countries does this check cover, and how fresh is it?"
+    ],
+    "netDescription": "Ask whether a stroller, crib, car seat or other baby gear was recalled in the U.S. or Canada. I answer only from the official notices.",
+    "peerPolicy": "closed",
+    "router": "https://api.otari.ai/api/v1",
+    "networkStatus": 200,
+    "networkCors": "*",
+    "tools": {
+      "agents": 1,
+      "mcp": [],
+      "remote": [],
+      "links": [],
+      "coded": 0,
+      "toolbox": 0
+    }
+  },
+  {
+    "site": "https://skybleak333.github.io/memory-policy-audit/agents/",
+    "name": "Memory Policy Audit",
+    "description": "Finds the refund policy in effect on a given date and cites its revision. Relate WebAssembly follows the revision graph from a stale recall result. Peer agents can call the same read-only date lookup through the browser action bridge.",
+    "team": "-",
+    "agentLink": "https://skybleak333.github.io/memory-policy-audit/agents/policy_audit.network.json",
+    "ok": true,
+    "problems": [],
+    "base": "https://skybleak333.github.io/memory-policy-audit/agents",
+    "requested": "policy_audit",
+    "manifestStatus": 200,
+    "manifestCors": "*",
+    "network": "policy_audit",
+    "frontMan": "policy_assistant",
+    "sampleQueries": [
+      "What was the annual plan refund window on 2026-11-23?",
+      "Which refund policy applied on 2026-09-30?"
+    ],
+    "netDescription": "Find the annual plan refund policy that applied on a given date and cite its revision.",
+    "peerPolicy": "closed",
+    "router": "https://api.otari.ai/api/v1",
+    "networkStatus": 200,
+    "networkCors": "*",
+    "tools": {
+      "agents": 2,
+      "mcp": [],
+      "remote": [],
+      "links": [],
+      "coded": 0,
+      "toolbox": 0
+    }
+  }
+]

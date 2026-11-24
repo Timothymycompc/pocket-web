@@ -185,3 +185,5 @@ body[data-view="ask"] .foot{display:none}
 .ns-llmbadge.pending{color:var(--brass)!important;border-color:var(--brass3)!important}
 .ns-llmbadge.real{color:#7be0b8!important;border-color:#1f6b52!important}
 .ns-llmbadge.error{color:#f7a1a1!important;border-color:#7a2a2a!important}
+
+#photo{scroll-margin-top:70px}

@@ -53,7 +53,7 @@ async function ask(text, send = false) {
   // The runtime's message box is one line: keep line breaks readable as " · ".
   input.value = String(text).split(/\n+/).map((l) => l.trim()).filter(Boolean).join(" · ").replace(/: · /g, ": ").replace(/ · My question:$/, " · My question: ");
   input.dispatchEvent(new Event("input", { bubbles: true }));
-  if (!document.activeElement?.closest?.("#photo")) input.focus();
+  if (!document.activeElement?.closest?.("#photo") && !$("#photo").contains(document.activeElement)) input.focus({ preventScroll: !!document.querySelector("#photo:not([hidden])") });
   if (send) $("#ns-send")?.click();
 }
 
@@ -144,7 +144,8 @@ async function readPhoto(blob) {
     question.addEventListener("keydown", (e) => { if (e.key === "Enter") { e.preventDefault(); $("#ns-send")?.click(); } });
     status.after(area, question);
     await sync();
-    question.focus();
+    question.focus({ preventScroll: true });
+    box.scrollIntoView({ block: "start", behavior: "smooth" });
   } catch (e) {
     status.replaceChildren("Couldn't read the photo: " + e.message + ". You can type what's on it instead.");
   }

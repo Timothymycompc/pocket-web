@@ -8,12 +8,20 @@ const SITE = process.env.SITE || "https://pocket-web-1021990235790.us-central1.r
 const cases = JSON.parse(fs.readFileSync(new URL("./routing.json", import.meta.url), "utf8"));
 fs.mkdirSync("out", { recursive: true });
 const host = new URL(SITE).host;
+// Judge each case against the sites Pocket Web offers today: an expected site that isn't loadable
+// today (it hangs or fails to load) can't be picked, so then the right answer is "none".
+const dir = await (await fetch(`${SITE}/directory.json`)).json();
+const offered = new Set(dir.sites.filter((s) => s.loadable).map((s) => s.toolName));
+for (const c of cases) {
+  const kept = c.expect.filter((t) => offered.has(t));
+  if (kept.length !== c.expect.length) { c.note = `not offered today: ${c.expect.filter((t) => !offered.has(t)).join(", ")}`; c.expect = kept; if (!kept.length) c.any = false; }
+}
 const browser = await chromium.launch();
 const results = [];
 for (const [i, c] of cases.entries()) {
   const ctx = await browser.newContext({ ...devices["Pixel 7"] });
   const page = await ctx.newPage();
-  const r = { q: c.q, expect: c.expect, why: c.why, called: [], consents: 0, reply: "", pass: false };
+  const r = { q: c.q, expect: c.expect, why: c.why, note: c.note || "", called: [], consents: 0, reply: "", pass: false };
   try {
     await page.goto(`${SITE}/#ask`, { waitUntil: "networkidle" });
     await page.waitForSelector("#ns-input", { timeout: 60_000 });
@@ -37,7 +45,7 @@ for (const [i, c] of cases.entries()) {
   } catch (e) { r.reply = "ERROR " + String(e.message || e).slice(0, 200); }
   await page.screenshot({ path: `out/routing-${String(i + 1).padStart(2, "0")}.png` }).catch(() => {});
   results.push(r);
-  console.log(`${r.pass ? "PASS" : "FAIL"} | expect ${JSON.stringify(c.expect)} got ${JSON.stringify(r.called)} | ${c.q.slice(0, 70)}\n     reply: ${r.reply.replace(/\s+/g, " ").slice(0, 200)}`);
+  console.log(`${r.pass ? "PASS" : "FAIL"} | expect ${JSON.stringify(c.expect)} got ${JSON.stringify(r.called)}${r.note ? ` (${r.note})` : ""} | ${c.q.slice(0, 70)}\n     reply: ${r.reply.replace(/\s+/g, " ").slice(0, 200)}`);
   await ctx.close();
 }
 await browser.close();

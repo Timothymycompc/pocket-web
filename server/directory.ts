@@ -81,6 +81,7 @@ export function baseAndName(link: string): { base: string; name: string } {
 const BUILDER_WORDS = /\b(agentic (web|site|website)s?|manifests?|MVP Profile|sly_data|HOCON|conformance|AI agents|site's AI agents|agent sites?|GitHub repository|ready (it is )?for AI agents|citation-bias|the model the visitor picks|NANDA)\b/i;
 export const OVERRIDES: Record<string, { category: Category; why: string }> = {
   "https://bacajelas-agentic.web.app/bacajelas": { category: "everyday", why: "A reading companion for Indonesian and English readers; its description mentions sly_data and a validator only as extras." },
+  "https://skybleak333.github.io/memory-policy-audit/agents/policy_audit": { category: "builders", why: "A technique demo: it answers from example policy data and says so (\"This response uses example data\")." },
 };
 
 export function categorize(peerUrl: string, description: string): Category {

@@ -79,12 +79,39 @@ let sitesByTool = new Map();   // toolName -> site, filled from directory.json
 const ownHost = location.host;
 const turn = { called: new Set(), results: [] };
 
-function plain(md) {
-  return String(md || "")
-    .replace(/^#{1,6}\s*/gm, "")
-    .replace(/\*\*(.+?)\*\*/g, "$1")
-    .replace(/^\s*[-*]\s+/gm, "• ")
-    .trim();
+// A small, safe Markdown subset for helper answers: headings, bullets, **bold**, [links](https://...)
+// and bare https links. Built as DOM nodes (never innerHTML), so a site's answer can't inject markup.
+function inline(text) {
+  const out = [];
+  const re = /\[([^\]]+)\]\((https?:\/\/[^\s)]+)\)|\*\*([^*]+)\*\*|(https?:\/\/[^\s<>()]+[^\s<>().,;:!?'"])/g;
+  let last = 0, m;
+  while ((m = re.exec(text))) {
+    if (m.index > last) out.push(text.slice(last, m.index));
+    if (m[1]) out.push(el("a", { href: m[2], target: "_blank", rel: "noopener nofollow" }, m[1]));
+    else if (m[3]) out.push(el("b", {}, m[3]));
+    else out.push(el("a", { href: m[4], target: "_blank", rel: "noopener nofollow" }, m[4].replace(/^https?:\/\//, "").slice(0, 60) + (m[4].length > 68 ? "…" : "")));
+    last = re.lastIndex;
+  }
+  if (last < text.length) out.push(text.slice(last));
+  return out;
+}
+function renderAnswer(md) {
+  const box = el("div", { class: "site-words-text" });
+  let list = null;
+  for (const raw of String(md || "").replace(/\r/g, "").split("\n")) {
+    const line = raw.trimEnd();
+    const bullet = line.match(/^\s*(?:[-*•]|\d+[.)])\s+(.*)$/);
+    if (bullet) { list ??= box.appendChild(el("ul")); list.append(el("li", {}, inline(bullet[1]))); continue; }
+    list = null;
+    if (!line.trim()) continue;
+    if (/^\s*\|?\s*:?-{3,}/.test(line)) continue; // table divider row
+    const head = line.match(/^#{1,6}\s+(.*)$/);
+    if (head) box.append(el("p", { class: "h" }, inline(head[1])));
+    else if (line.includes("|") && /^\s*\|/.test(line)) box.append(el("p", { class: "row" }, inline(line.replace(/^\s*\||\|\s*$/g, "").split("|").map((c) => c.trim()).join("  ·  "))));
+    else box.append(el("p", {}, inline(line)));
+  }
+  if (!box.childNodes.length) box.append(el("p", {}, "(The site sent back an empty answer.)"));
+  return box;
 }
 
 function showSiteWords() {
@@ -93,12 +120,11 @@ function showSiteWords() {
   for (const r of turn.results) {
     if (!turn.called.has(r.site.toolName) || r.shown) continue;
     r.shown = true;
-    const text = plain(r.text);
     msgs.append(el("div", { class: "site-words", "data-site": r.site.name },
       el("div", { class: "site-words-head" },
         el("span", { class: "site-words-label" }, "Answer from ", el("b", {}, r.site.name)),
         el("a", { href: r.site.site, target: "_blank", rel: "noopener" }, "Open site ↗")),
-      el("p", { class: "site-words-text" }, text || "(The site sent back an empty answer.)"),
+      renderAnswer(r.text),
       el("p", { class: "site-words-foot" }, "These are the site's own words, shown unchanged. Built and run by ", r.site.team || "its own team", ".")));
     msgs.scrollTop = msgs.scrollHeight;
   }
@@ -132,14 +158,21 @@ function checkBadge(s) {
   return el("span", { class: "check " + (ok ? "ok" : "bad"), title: s.check.note },
     (ok ? "Answered " : "Didn't answer ") + dayWord(s.check.checkedAt));
 }
-function siteCard(s, { example = true, problems = false } = {}) {
+// The builder's own description, cut to its first sentence for the short cards on Home.
+function shortText(d) {
+  const first = String(d || "").split(/(?<=[.!?])\s+/)[0] || "";
+  return first.length > 150 ? first.slice(0, 147).replace(/\s+\S*$/, "") + "…" : first;
+}
+function siteCard(s, { example = true, problems = false, short = false } = {}) {
   const q = s.sampleQueries?.[0];
   return el("article", { class: "card" },
     el("div", { class: "card-head" },
       el("h3", {}, s.name),
       s.team ? el("span", { class: "team" }, "by " + s.team) : null),
     checkBadge(s),
-    el("p", {}, s.description),
+    short ? el("p", {}, shortText(s.description))
+      : s.description.length > 200 ? el("details", { class: "more" }, el("summary", {}, shortText(s.description)), el("p", {}, s.description))
+      : el("p", {}, s.description),
     problems && s.problems?.length ? el("ul", { class: "problems" }, s.problems.map((p) => el("li", {}, p))) : null,
     el("div", { class: "card-actions" },
       example && q && s.loadable ? el("button", { class: "try", onclick: () => ask(q, true) }, "Try: ", el("span", {}, q.length > 90 ? q.slice(0, 88) + "…" : q)) : null,
@@ -158,7 +191,10 @@ async function loadDirectory() {
     const builders = ok.filter((s) => s.category === "builders");
     const broken = sites.filter((s) => !s.loadable);
 
-    $("#when").replaceChildren(...everyday.filter((s) => s.sampleQueries?.length).map((s) => siteCard(s)));
+    // Home: everyday helpers with an example, the ones that answered in the latest check first.
+    const rank = (s) => (s.check?.result === "answered" ? 0 : s.check ? 2 : 1);
+    const home = everyday.filter((s) => s.sampleQueries?.length).sort((a, b) => rank(a) - rank(b) || a.listedOrder - b.listedOrder);
+    $("#when").replaceChildren(...home.map((s) => siteCard(s, { short: true })));
     $("#helper-list").replaceChildren(...(everyday.length ? everyday.map((s) => siteCard(s)) : [el("p", { class: "dim" }, "No everyday helpers on the list right now.")]));
     $("#builder-list").replaceChildren(...builders.map((s) => siteCard(s)));
     $("#broken-list").replaceChildren(...(broken.length ? broken.map((s) => siteCard(s, { example: false, problems: true })) : [el("p", { class: "dim" }, "None. Every listed site loads.")]));

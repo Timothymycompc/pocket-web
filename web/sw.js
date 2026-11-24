@@ -1,8 +1,8 @@
 // sw.js — makes Pocket Web installable and opens the app shell when offline.
 // Network first, always: answers, the directory and agent files are never served stale.
 // Only the page shell is kept, as a fallback for when the phone has no connection.
-const SHELL = "pocket-shell-v1";
-const FILES = ["./", "./index.html", "./app.css", "./app.js", "./manifest.webmanifest", "./icons/icon-192.png"];
+const SHELL = "pocket-shell-v2";
+const FILES = ["./", "./index.html", "./app.css", "./app.js", "./privacy.js", "./manifest.webmanifest", "./icons/icon-192.png"];
 
 self.addEventListener("install", (e) => {
   e.waitUntil(caches.open(SHELL).then((c) => c.addAll(FILES)).then(() => self.skipWaiting()));

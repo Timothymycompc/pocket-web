@@ -2,6 +2,7 @@
 // Pages: Home (what/when/how), Ask (the runtime chat), Helpers and Builders (the live
 // directory from directory.json). Agent logic lives in the runtime, not here.
 import { boot } from "./runtime/index.js";
+import { findPersonal, removePersonal, describe } from "./privacy.js";
 
 const $ = (s, el = document) => el.querySelector(s);
 const el = (tag, attrs = {}, ...kids) => {
@@ -54,6 +55,49 @@ async function ask(text, send = false) {
   input.focus();
   if (send) $("#ns-send")?.click();
 }
+
+// ---- Privacy guard on Send ---------------------------------------------------------------
+// Before a message leaves the phone, plain code (privacy.js) looks for emails, phone numbers,
+// card numbers and SSNs. If it finds any, Send waits and offers to remove them, because the
+// helper site that answers would see them. The person decides; nothing is changed silently.
+let approvedText = null;
+function guardBox() {
+  let box = document.getElementById("privacy");
+  if (!box) {
+    box = el("div", { id: "privacy", class: "privacy", role: "alert", hidden: "" });
+    document.querySelector("#ask .app-wrap")?.before(box);
+  }
+  return box;
+}
+function guardSend(e) {
+  const input = document.getElementById("ns-input");
+  if (!input) return;
+  const isSend = e.type === "click" ? e.target.closest?.("#ns-send") : (e.key === "Enter" && e.target === input && !e.shiftKey);
+  if (!isSend) return;
+  if (document.querySelector(".ns-inputbar")?.dataset.turnActive === "true") return; // steering a running answer
+  const text = input.value;
+  if (approvedText === text) { approvedText = null; return; }
+  const hits = findPersonal(text);
+  if (!hits.length) return;
+  e.preventDefault(); e.stopImmediatePropagation();
+  const box = guardBox();
+  const send = (value) => {
+    box.hidden = true;
+    input.value = value;
+    input.dispatchEvent(new Event("input", { bubbles: true }));
+    approvedText = value;
+    document.getElementById("ns-send")?.click();
+  };
+  box.replaceChildren(
+    el("p", {}, el("b", {}, "Your message has " + describe(hits) + "."), " The helper site that answers would see it. Remove it first?"),
+    el("div", { class: "privacy-actions" },
+      el("button", { class: "primary", onclick: () => send(removePersonal(text, hits)) }, "Remove and send"),
+      el("button", { onclick: () => send(text) }, "Send as is"),
+      el("button", { onclick: () => { box.hidden = true; input.focus(); } }, "Edit")));
+  box.hidden = false;
+}
+addEventListener("click", guardSend, true);
+addEventListener("keydown", guardSend, true);
 
 // ---- Shared from another app (Android share target -> /share -> ?title&text&url) ----
 {
@@ -160,8 +204,12 @@ function checkBadge(s) {
 }
 // The builder's own description, cut to its first sentence for the short cards on Home.
 function shortText(d) {
-  const first = String(d || "").split(/(?<=[.!?])\s+/)[0] || "";
-  return first.length > 150 ? first.slice(0, 147).replace(/\s+\S*$/, "") + "…" : first;
+  // A sentence ends at . ! or ? after a lowercase word or digit, then a space and a capital,
+  // so abbreviations like "U.S." or "e.g." don't cut it short.
+  const text = String(d || "").trim();
+  const end = text.search(/[a-z0-9)\]"'][.!?](?=\s+[A-Z(])/);
+  const first = end >= 0 ? text.slice(0, end + 2) : text;
+  return first.length > 160 ? first.slice(0, 157).replace(/\s+\S*$/, "") + "…" : first;
 }
 function siteCard(s, { example = true, problems = false, short = false } = {}) {
   const q = s.sampleQueries?.[0];

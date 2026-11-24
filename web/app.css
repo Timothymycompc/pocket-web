@@ -158,3 +158,10 @@ body[data-view="ask"] .foot{display:none}
   .top{padding-right:420px}
   #app{height:calc(100dvh - 120px)}
 }
+
+/* Privacy guard */
+.privacy{margin:12px 0 0;padding:10px 12px;border-radius:12px;border:1px solid #6b4a1f;background:rgba(245,158,11,.08);font-size:14px;animation:rise .25s ease-out both}
+.privacy p{margin:0 0 8px}
+.privacy-actions{display:flex;flex-wrap:wrap;gap:8px}
+.privacy-actions button{font:600 13px/1 inherit;font-family:inherit;padding:9px 12px;border-radius:999px;border:1px solid var(--line2);background:var(--raised);color:var(--text);cursor:pointer}
+.privacy-actions button.primary{background:var(--brass2);color:#17120a;border-color:var(--brass2)}

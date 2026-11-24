@@ -9,12 +9,13 @@ steps:
   - |
     set -e
     npm init -y > /dev/null && npm i --no-save --no-audit --no-fund playwright@1.49.0 > /dev/null
-    node peer-check.mjs
+    node ${_SCRIPT}
 - name: gcr.io/google.com/cloudsdktool/cloud-sdk:slim
   entrypoint: bash
   args: ["-c", "gcloud storage cp -q -r out/* gs://x300-506418-pulse-videos/pocket-web/peer-checks/$BUILD_ID/"]
 substitutions:
   _ONLY: ""
+  _SCRIPT: peer-check.mjs
 timeout: 3600s
 options:
   machineType: E2_HIGHCPU_8

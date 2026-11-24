@@ -1,0 +1,8 @@
+[
+  { "q": "They didn't know they were keeping me when I got here but I did.......", "expect": [], "why": "a personal post shared with no question (Tim's real share, 2026-11-23)" },
+  { "q": "What's the weather in Dallas tomorrow?", "expect": [], "why": "no listed site does weather" },
+  { "q": "Was the Graco Quattro Tour stroller recalled?", "expect": ["recalled_recall_check"], "why": "baby gear recall" },
+  { "q": "What hackathons can I still enter in the next month?", "expect": ["deadline_desk"], "why": "open contests" },
+  { "q": "Can you explain this letter in plain words? 'Your account is past due. A late fee of $25 will be added if payment of $140.18 is not received by December 1.'", "expect": ["plainly_agent_plainly_document_helper"], "why": "a confusing bill" },
+  { "q": "lol", "expect": [], "why": "too vague" }
+]

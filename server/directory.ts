@@ -105,6 +105,11 @@ export async function readSite(row: ReturnType<typeof parseList>[number], order:
     if (!m.cors) problems.push("agent-manifest.json can't be read by other sites (no CORS header)");
     const manifest = JSON.parse(m.text);
     const nets: any[] = Array.isArray(manifest.networks) ? manifest.networks : [];
+    // A manifest that lists site actions but no bridge page makes every calling site wait for a bridge
+    // that isn't there, then time out (BacaJelas, 2026-11-24, 204 s). Callers can't use it until it's fixed.
+    if (manifest.actions && typeof manifest.actions === "object" && !manifest.actions.bridge) {
+      problems.push("its manifest lists site actions but no action bridge (actions.bridge), so a calling site waits and times out");
+    }
     const entry = nets.find((n) => n?.name === name) || (nets.length === 1 ? nets[0] : null);
     if (!entry) { problems.push(`the manifest has no network named '${name}'`); return site; }
     site.network = entry.name;

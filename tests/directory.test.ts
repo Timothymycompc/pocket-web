@@ -17,7 +17,8 @@ const replay = async (url: string) => {
 test("reads all 20 sites from the recorded public list", async () => {
   const d = await buildDirectory(replay);
   assert.equal(d.sites.length, 20);
-  assert.equal(d.sites.filter((s) => s.loadable).length, 18);
+  assert.equal(d.sites.filter((s) => s.loadable).length, 17);
+  assert.deepEqual(d.sites.filter((s) => !s.loadable).map((s) => s.name).sort(), ["AegisWeave", "BacaJelas", "The Open Agentic Web Challenge"]);
 });
 
 test("a site without CORS is kept, marked, with the reason", async () => {
@@ -71,7 +72,7 @@ test("Pocket Web's network hands off only to loadable sites and names each one",
   const n: any = pocketNetwork(d, "gemini-flash-lite-latest");
   const front = n.tools[0];
   assert.equal(front.name, "pocket_guide");
-  assert.equal(front.tools.length, 18);
+  assert.equal(front.tools.length, 17);
   assert.ok(!front.tools.some((t: string) => t.includes("aegisweave")));
   assert.match(front.instructions, /Recalled\? \(tool: recalled_recall_check/);
   assert.match(front.instructions, /Do not answer the question yourself/);
@@ -127,4 +128,13 @@ test("a refresh where most sites suddenly fail is not trusted; the last good rea
   await store.refresh();
   await store.refresh();
   assert.equal(store.get(), good);
+});
+
+test("a manifest with site actions but no bridge is marked, so callers don't hang (BacaJelas, real case)", async () => {
+  const md = "|https://a.example/|A|Simplifies text|-|[Link](https://a.example/a.network.json)|";
+  const manifest = JSON.stringify({ networks: [{ name: "a", front_man: "f", hocon: "./a.network.json" }], actions: { version: 1, module: "./site-actions.js", agentTools: ["website_x"] } });
+  const network = JSON.stringify({ tools: [{ name: "f", function: { description: "d" }, instructions: "i" }] });
+  const d = await buildDirectory(async (url) => ({ status: 200, cors: true, text: url.endsWith(".md") ? md : url.endsWith("agent-manifest.json") ? manifest : network }), "https://list.example/list.md");
+  assert.equal(d.sites[0].loadable, false);
+  assert.match(d.sites[0].problems[0], /no action bridge/);
 });

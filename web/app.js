@@ -24,8 +24,9 @@ function show() {
   const view = VIEWS.includes(want) ? want : "home";
   for (const v of document.querySelectorAll(".view")) v.hidden = v.dataset.view !== view;
   for (const a of document.querySelectorAll(".tabs a")) a.toggleAttribute("aria-current", a.dataset.tab === view);
+  // A new page starts at its top; the same page (e.g. a photo landing on Ask) keeps its place.
+  if (document.body.dataset.view !== view) window.scrollTo({ top: 0 });
   document.body.dataset.view = view;
-  if (view !== "ask") window.scrollTo({ top: 0 });
 }
 addEventListener("hashchange", show);
 show();
@@ -306,7 +307,9 @@ async function loadDirectory() {
     const rank = (s) => (s.check?.result === "answered" ? 0 : s.check ? 2 : 1);
     const home = everyday.filter((s) => s.sampleQueries?.length).sort((a, b) => rank(a) - rank(b) || a.listedOrder - b.listedOrder);
     $("#when").replaceChildren(...home.map((s) => siteCard(s, { short: true })));
-    const quick = home.filter((s) => s.check?.result === "answered").slice(0, 3);
+    // Example chips: only examples that got a real answer in today's check, not "I can't do that here".
+    const declined = /\b(cannot|can't|unable|could not|couldn't|don't have|do not have|not able)\b/i;
+    const quick = home.filter((s) => s.check?.result === "answered" && !declined.test(s.check.note)).slice(0, 3);
     $("#quick").replaceChildren(...quick.map((s) => el("button", { class: "chip", onclick: () => ask(s.sampleQueries[0], true) }, el("b", {}, s.name), " · ", s.sampleQueries[0].length > 60 ? s.sampleQueries[0].slice(0, 58) + "…" : s.sampleQueries[0])));
     $("#quick").hidden = !quick.length;
     $("#helper-list").replaceChildren(...(everyday.length ? everyday.map((s) => siteCard(s, { checkNote: true })) : [el("p", { class: "dim" }, "No everyday helpers on the list right now.")]));

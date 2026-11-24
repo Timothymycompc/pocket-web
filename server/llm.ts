@@ -135,8 +135,13 @@ export function llmRoutes(getKey: () => string | undefined, fetchImpl: typeof fe
       const messages = body.messages as unknown[];
       const upstream = await sendWithRetry(messages);
       if (upstream.status === 429 || upstream.status === 503) {
-        await upstream.body?.cancel().catch(() => {});
-        return refuse(res, 429, "The free model is busy right now. Try again in a minute, or add your own key in AI model settings (the gear icon).");
+        // Google says which limit was hit. A daily quota needs a different message than a busy minute.
+        const why = await upstream.text().catch(() => "");
+        const daily = upstream.status === 429 && /PerDay|per day|daily/i.test(why);
+        console.warn(`Free model refused: HTTP ${upstream.status}${daily ? " (daily quota)" : ""}: ${why.replace(/\s+/g, " ").slice(0, 300)}`);
+        return refuse(res, 429, daily
+          ? "The free model has used up today's free quota. Add your own key in AI model settings (the gear icon), or try again tomorrow."
+          : "The free model is busy right now. Try again in a minute, or add your own key in AI model settings (the gear icon).");
       }
       await relay(upstream, res);
     } catch {

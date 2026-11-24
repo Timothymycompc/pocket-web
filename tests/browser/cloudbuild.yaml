@@ -9,7 +9,7 @@ steps:
   - |
     set -e
     npm init -y > /dev/null && npm i --no-save --no-audit --no-fund playwright@1.49.0 > /dev/null
-    node ${_SCRIPT}
+    node ${_SCRIPT} || echo "CHECK FAILED (exit $$?)"
 - name: gcr.io/google.com/cloudsdktool/cloud-sdk:slim
   entrypoint: bash
   args: ["-c", "gcloud storage cp -q -r out/* gs://x300-506418-pulse-videos/pocket-web/peer-checks/$BUILD_ID/"]

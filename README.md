@@ -28,8 +28,8 @@ all of them in your pocket, and every newly listed site joins automatically.
   loaded stay listed on the Builders page with the exact reason, so they can fix it.
 - **One data-only network.** The directory becomes Pocket Web's network file
   (`/pocket_web.network.json`): a front agent, `pocket_guide`, whose tools are the
-  listed sites' network URLs. It picks one site, says which and why, hands over the
-  request in full, and answers with that site's words and name. If nothing fits, it says so.
+  listed sites' network URLs. It picks one site and hands over the request in full; the
+  permission card names the site before anything is sent.
 - **Peers run in your browser.** The challenge's runtime (nsDeploy, agentify-website edition,
   vendored unchanged in `web/runtime`, see its CHANGES.md)
   asks before contacting each site, then loads its network and runs it locally on the

@@ -6,6 +6,11 @@
   <title>Pocket Web</title>
   <meta name="description" content="Send anything on your phone to the right AI helper on the open agentic web. Helpers built by independent people, run on your phone after you approve." />
   <meta name="theme-color" content="#0a0f19" />
+  <meta property="og:title" content="Pocket Web: the open agentic web on your phone" />
+  <meta property="og:description" content="Share anything to the right agent site, built by anyone, run on your phone after you say OK." />
+  <meta property="og:image" content="https://pocket-web-1021990235790.us-central1.run.app/icons/card.png" />
+  <meta property="og:type" content="website" />
+  <meta name="twitter:card" content="summary_large_image" />
   <link rel="manifest" href="./manifest.webmanifest" />
   <link rel="icon" href="./icons/icon-192.png" />
   <link rel="apple-touch-icon" href="./icons/icon-192.png" />
@@ -56,6 +61,7 @@
         <label class="photo-btn">📷 Read a photo<input id="photo-input" type="file" accept="image/*" hidden /></label>
         <span class="small dim">The AI model reads the text on it. You check it before anything is sent.</span>
       </div>
+      <div id="quick" class="quick" aria-label="Try an example" hidden></div>
       <div id="photo" class="photo" hidden></div>
       <div id="line" class="line" role="status" aria-live="polite" hidden></div>
       <div class="app-wrap"><div id="app">Loading the agent runtime…</div></div>
@@ -82,6 +88,7 @@
         </ol>
         <p class="small">Pocket Web is an agent site too. Load it from yours: <code id="peer-url" class="peer">https://this-site/pocket_web</code> · <a href="./agent-manifest.json">manifest</a> · <a href="./pocket_web.network.json">network</a> · <a href="https://github.com/Timothymycompc/pocket-web">source</a></p>
       </div>
+      <p class="small dim">Everything Pocket Web knows about each listed site, including today's check, is public and machine-readable: <a href="./directory.json">directory.json</a>.</p>
       <h2>Tools for builders</h2>
       <div id="builder-list" class="list"></div>
       <h2>Listed sites that can't be loaded yet</h2>

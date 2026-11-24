@@ -273,13 +273,14 @@ function shortText(d) {
   const first = end >= 0 ? text.slice(0, end + 2) : text;
   return first.length > 160 ? first.slice(0, 157).replace(/\s+\S*$/, "") + "…" : first;
 }
-function siteCard(s, { example = true, problems = false, short = false } = {}) {
+function siteCard(s, { example = true, problems = false, short = false, checkNote = false } = {}) {
   const q = s.sampleQueries?.[0];
   return el("article", { class: "card" },
     el("div", { class: "card-head" },
       el("h3", {}, s.name),
       s.team ? el("span", { class: "team" }, "by " + s.team) : null),
     checkBadge(s),
+    checkNote && s.check?.result === "no-answer" ? el("p", { class: "check-note" }, "Today's check: " + s.check.note) : null,
     short ? el("p", {}, shortText(s.description))
       : s.description.length > 200 ? el("details", { class: "more" }, el("summary", {}, shortText(s.description)), el("p", {}, s.description))
       : el("p", {}, s.description),
@@ -305,8 +306,11 @@ async function loadDirectory() {
     const rank = (s) => (s.check?.result === "answered" ? 0 : s.check ? 2 : 1);
     const home = everyday.filter((s) => s.sampleQueries?.length).sort((a, b) => rank(a) - rank(b) || a.listedOrder - b.listedOrder);
     $("#when").replaceChildren(...home.map((s) => siteCard(s, { short: true })));
-    $("#helper-list").replaceChildren(...(everyday.length ? everyday.map((s) => siteCard(s)) : [el("p", { class: "dim" }, "No everyday helpers on the list right now.")]));
-    $("#builder-list").replaceChildren(...builders.map((s) => siteCard(s)));
+    const quick = home.filter((s) => s.check?.result === "answered").slice(0, 3);
+    $("#quick").replaceChildren(...quick.map((s) => el("button", { class: "chip", onclick: () => ask(s.sampleQueries[0], true) }, el("b", {}, s.name), " · ", s.sampleQueries[0].length > 60 ? s.sampleQueries[0].slice(0, 58) + "…" : s.sampleQueries[0])));
+    $("#quick").hidden = !quick.length;
+    $("#helper-list").replaceChildren(...(everyday.length ? everyday.map((s) => siteCard(s, { checkNote: true })) : [el("p", { class: "dim" }, "No everyday helpers on the list right now.")]));
+    $("#builder-list").replaceChildren(...builders.map((s) => siteCard(s, { checkNote: true })));
     $("#broken-list").replaceChildren(...(broken.length ? broken.map((s) => siteCard(s, { example: false, problems: true })) : [el("p", { class: "dim" }, "None. Every listed site loads.")]));
     const when = new Date(d.updatedAt);
     $("#updated").textContent = `${sites.length} sites listed · ${ok.length} load from other sites · read ${when.toLocaleString([], { dateStyle: "medium", timeStyle: "short" })}`;

@@ -175,3 +175,13 @@ body[data-view="ask"] .foot{display:none}
 .photo img{width:84px;height:84px;object-fit:cover;border-radius:8px;flex:none}
 .photo-status{margin:0;font-size:13.5px;color:var(--dim)}
 .photo-status b{color:var(--text)}
+
+.photo>div{flex:1;min-width:0;display:flex;flex-direction:column;gap:8px}
+.photo-text,.photo-q{width:100%;box-sizing:border-box;background:var(--raised);color:var(--text);border:1px solid var(--line2);border-radius:10px;padding:8px 10px;font:14px/1.4 "JetBrains Mono",monospace;resize:vertical}
+.photo-q{font-family:inherit;font-size:15px;border-color:var(--brass3)}
+.photo-text:focus,.photo-q:focus{outline:2px solid var(--brass3);outline-offset:1px}
+/* The runtime's model status pill, in the app's colors */
+.ns-llmbadge{background:var(--raised)!important;color:var(--dim)!important;border:1px solid var(--line2)!important;font-weight:600!important}
+.ns-llmbadge.pending{color:var(--brass)!important;border-color:var(--brass3)!important}
+.ns-llmbadge.real{color:#7be0b8!important;border-color:#1f6b52!important}
+.ns-llmbadge.error{color:#f7a1a1!important;border-color:#7a2a2a!important}

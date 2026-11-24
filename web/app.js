@@ -53,7 +53,7 @@ async function ask(text, send = false) {
   // The runtime's message box is one line: keep line breaks readable as " · ".
   input.value = String(text).split(/\n+/).map((l) => l.trim()).filter(Boolean).join(" · ").replace(/: · /g, ": ").replace(/ · My question:$/, " · My question: ");
   input.dispatchEvent(new Event("input", { bubbles: true }));
-  input.focus();
+  if (!document.activeElement?.closest?.("#photo")) input.focus();
   if (send) $("#ns-send")?.click();
 }
 
@@ -133,8 +133,18 @@ async function readPhoto(blob) {
     if (!r.ok) throw new Error(body?.error?.message || `HTTP ${r.status}`);
     const text = String(body?.choices?.[0]?.message?.content || "").trim();
     if (!text) throw new Error("the model sent back no text");
-    status.replaceChildren(el("b", {}, "Read from your photo. "), "Check it, add your question, then Send. Only this text goes to a helper site, not the photo.");
-    await ask(`From my photo:\n${text}\nMy question:`);
+    status.replaceChildren(el("b", {}, "Read from your photo. "), "Check it and fix anything wrong. Only this text goes to a helper site, not the photo.");
+    // The message box is one line, so the read text is shown here in full, editable, and kept in step.
+    const lines = text.split(/\n+/).map((l) => l.trim()).filter(Boolean);
+    const area = el("textarea", { class: "photo-text", rows: String(Math.min(8, lines.length + 1)), "aria-label": "Text read from your photo" });
+    area.value = lines.join("\n");
+    const question = el("input", { class: "photo-q", placeholder: "Your question, e.g. Was this recalled?", "aria-label": "Your question" });
+    const sync = () => ask(`From my photo:\n${area.value}\nMy question: ${question.value}`);
+    area.addEventListener("input", sync); question.addEventListener("input", sync);
+    question.addEventListener("keydown", (e) => { if (e.key === "Enter") { e.preventDefault(); $("#ns-send")?.click(); } });
+    status.after(area, question);
+    await sync();
+    question.focus();
   } catch (e) {
     status.replaceChildren("Couldn't read the photo: " + e.message + ". You can type what's on it instead.");
   }

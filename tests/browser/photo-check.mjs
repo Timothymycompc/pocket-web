@@ -19,7 +19,19 @@ await page.waitForSelector("#ns-input", { timeout: 60_000 });
 await page.setInputFiles("#photo-input", "label.jpg");
 out.button = await waitText();
 out.buttonStatus = await page.locator(".photo-status").innerText().catch(() => "");
+out.cardText = await page.inputValue(".photo-text").catch(() => "");
 await page.screenshot({ path: "out/photo-1-button.png" });
+// The whole flow: ask about the photo, approve the hand-off, get the helper's own words.
+await page.fill(".photo-q", "Was this recalled?");
+await page.press(".photo-q", "Enter");
+for (let i = 0; i < 150 && !(await page.locator(".site-words").count()); i++) {
+  const allow = page.locator(".ns-consent button[data-d=allow]");
+  for (let k = 0; k < await allow.count(); k++) if (await allow.nth(k).isVisible().catch(() => false)) await allow.nth(k).click().catch(() => {});
+  await page.waitForTimeout(1000);
+}
+out.answerFrom = await page.locator(".site-words").first().getAttribute("data-site").catch(() => "");
+out.answer = (await page.locator(".site-words-text").first().innerText().catch(() => "")).slice(0, 300);
+await page.screenshot({ path: "out/photo-3-answer.png" });
 
 // Android share: the service worker is active now; submit the same form Android would.
 await page.evaluate(async () => { await navigator.serviceWorker.ready; });
@@ -39,7 +51,7 @@ await page.waitForSelector("#ns-input", { timeout: 60_000 });
 out.shareUrl = page.url();
 out.share = await waitText();
 await page.screenshot({ path: "out/photo-2-share.png" });
-out.ok = [out.button, out.share].every((v) => /Quattro/i.test(v) && /1757345/.test(v));
+out.ok = [out.button, out.share, out.cardText].every((v) => /Quattro/i.test(v) && /1757345/.test(v)) && out.answerFrom === "Recalled?";
 console.log(JSON.stringify(out, null, 1));
 await browser.close();
 process.exit(out.ok ? 0 : 1);

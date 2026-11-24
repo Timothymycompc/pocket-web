@@ -10,7 +10,7 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { loadSecrets } from "./secrets.js";
 import { llmRoutes, DEFAULT_MODEL } from "./llm.js";
-import { buildDirectory, pocketNetwork, POCKET_NETWORK, LIST_URL, liveFetch, type Directory } from "./directory.js";
+import { buildDirectory, pocketNetwork, attachChecks, POCKET_NETWORK, LIST_URL, liveFetch, type Directory } from "./directory.js";
 import { readLatestCheck } from "./status.js";
 
 const here = path.dirname(fileURLToPath(import.meta.url));
@@ -189,6 +189,8 @@ if (isMain || process.env.POCKET_START === "1") {
   const store = directoryStore();
   store.refresh();
   setInterval(() => store.refresh(), REFRESH_MS).unref();
+  // The daily check finishes at its own time; pick up its results within 10 minutes.
+  setInterval(async () => { const d = store.get(); if (d) attachChecks(d.sites, await readLatestCheck()); }, 600_000).unref();
   const port = Number(process.env.PORT || 8080);
   createApp(store).listen(port, () => console.log(`Pocket Web on :${port}`));
 }

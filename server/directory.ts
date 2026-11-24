@@ -126,6 +126,13 @@ export async function readSite(row: ReturnType<typeof parseList>[number], order:
   return site;
 }
 
+/** Marks each site with the latest daily check result (server/status.ts). */
+export function attachChecks(sites: Site[], file: CheckFile | null): void {
+  if (!file) return;
+  const checks = checksBySite(file, new Map(sites.filter((s) => s.loadable).map((s) => [s.peerUrl, s.toolName])));
+  for (const s of sites) { const c = checks.get(s.peerUrl); if (c) s.check = c; }
+}
+
 /** Same rule as the runtime (runner.js safeName + kernel.js parseExternalAgent). */
 export function toolNameFor(peerUrl: string): string {
   const path = new URL(peerUrl).pathname.replace(/^\//, "");
@@ -151,8 +158,7 @@ export async function buildDirectory(get: Fetcher = liveFetch, listUrl = LIST_UR
     if (other) { s.loadable = false; s.problems.push(`its network path gives the same tool name as ${other}; a different network name fixes it`); }
     else seen.set(s.toolName, s.name);
   }
-  const checks = checksBySite(await readChecks().catch(() => null), new Map(sites.filter((s) => s.loadable).map((s) => [s.peerUrl, s.toolName])));
-  for (const s of sites) { const c = checks.get(s.peerUrl); if (c) s.check = c; }
+  attachChecks(sites, await readChecks().catch(() => null));
   return { updatedAt: new Date().toISOString(), source: LIST_PAGE, sites };
 }
 

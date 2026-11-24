@@ -57,7 +57,8 @@ h2{font-size:19px;margin:28px 0 4px}
 .card-actions a{font-size:13px;text-decoration:none}
 .try{text-align:left;background:var(--raised);border:1px dashed var(--line2);color:var(--text);border-radius:10px;padding:8px 10px;font:500 13px/1.35 inherit;font-family:inherit;cursor:pointer;transition:border-color .2s,background .2s}
 .try:hover,.try:focus-visible{border-color:var(--brass2);background:#1d283c}
-.try span{color:var(--brass)}
+.try span{color:var(--brass);overflow-wrap:anywhere}
+.try{overflow-wrap:anywhere;min-width:0}
 .problems{margin:0;padding-left:18px;color:#f0b37a;font-size:12.5px}
 
 .promise{display:grid;gap:10px;margin:28px 0 10px;grid-template-columns:repeat(auto-fit,minmax(220px,1fr))}

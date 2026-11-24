@@ -165,3 +165,12 @@ body[data-view="ask"] .foot{display:none}
 .privacy-actions{display:flex;flex-wrap:wrap;gap:8px}
 .privacy-actions button{font:600 13px/1 inherit;font-family:inherit;padding:9px 12px;border-radius:999px;border:1px solid var(--line2);background:var(--raised);color:var(--text);cursor:pointer}
 .privacy-actions button.primary{background:var(--brass2);color:#17120a;border-color:var(--brass2)}
+
+/* Photos */
+.ask-tools{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin:12px 0 0}
+.photo-btn{display:inline-flex;align-items:center;gap:6px;padding:8px 14px;border-radius:999px;border:1px solid var(--brass3);color:var(--brass);font-weight:700;font-size:14px;cursor:pointer;transition:background .2s}
+.photo-btn:hover{background:rgba(207,171,102,.1)}
+.photo{display:flex;gap:12px;align-items:flex-start;margin:12px 0 0;padding:10px;border:1px solid var(--line2);border-radius:12px;background:var(--panel);animation:rise .3s ease-out both}
+.photo img{width:84px;height:84px;object-fit:cover;border-radius:8px;flex:none}
+.photo-status{margin:0;font-size:13.5px;color:var(--dim)}
+.photo-status b{color:var(--text)}

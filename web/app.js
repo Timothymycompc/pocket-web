@@ -89,7 +89,7 @@ function guardSend(e) {
     document.getElementById("ns-send")?.click();
   };
   box.replaceChildren(
-    el("p", {}, el("b", {}, "Your message has " + describe(hits) + "."), " The helper site that answers would see it. Remove it first?"),
+    el("p", {}, el("b", {}, "Your message has " + describe(hits) + "."), (hits.length > 1 ? " The helper site that answers would see them. Remove them first?" : " The helper site that answers would see it. Remove it first?")),
     el("div", { class: "privacy-actions" },
       el("button", { class: "primary", onclick: () => send(removePersonal(text, hits)) }, "Remove and send"),
       el("button", { onclick: () => send(text) }, "Send as is"),
@@ -99,9 +99,59 @@ function guardSend(e) {
 addEventListener("click", guardSend, true);
 addEventListener("keydown", guardSend, true);
 
-// ---- Shared from another app (Android share target -> /share -> ?title&text&url) ----
+// ---- Photos: read the text on them ---------------------------------------------------------
+// The photo goes only to this site's AI model (or nowhere, if the person cancels), which copies
+// the printed text: brand, model number, UPC, dates. That text lands in the message box for the
+// person to check and edit. Helper sites only ever get the text the person sends.
+const PHOTO_PROMPT = "A person shared this photo to ask an AI helper about it. Write down the text you can read on it exactly as printed: brand, product name, model number, UPC or barcode digits, dates, and label wording that matters. Then one short line saying what the item or document is. Do not guess: write [unreadable] for anything you can't read. Never copy people's names, addresses, phone numbers, emails or account numbers: write [personal detail] instead. Plain text, no markdown.";
+
+async function shrink(blob, max = 1024) {
+  const img = await createImageBitmap(blob);
+  const scale = Math.min(1, max / Math.max(img.width, img.height));
+  const c = document.createElement("canvas");
+  c.width = Math.round(img.width * scale); c.height = Math.round(img.height * scale);
+  c.getContext("2d").drawImage(img, 0, 0, c.width, c.height);
+  return c.toDataURL("image/jpeg", 0.8);
+}
+
+async function readPhoto(blob) {
+  const box = $("#photo");
+  location.hash = "#ask";
+  const url = URL.createObjectURL(blob);
+  const status = el("p", { class: "photo-status" }, el("span", { class: "dot" }), "Reading the text in your photo…");
+  box.replaceChildren(el("img", { src: url, alt: "Your photo" }), el("div", {}, status));
+  box.hidden = false;
+  try {
+    const dataUrl = await shrink(blob);
+    const r = await fetch(new URL("llm/v1/chat/completions", siteBase), {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({ messages: [{ role: "user", content: [{ type: "text", text: PHOTO_PROMPT }, { type: "image_url", image_url: { url: dataUrl } }] }] }),
+    });
+    const body = await r.json().catch(() => ({}));
+    if (!r.ok) throw new Error(body?.error?.message || `HTTP ${r.status}`);
+    const text = String(body?.choices?.[0]?.message?.content || "").trim();
+    if (!text) throw new Error("the model sent back no text");
+    status.replaceChildren(el("b", {}, "Read from your photo. "), "Check it, add your question, then Send. Only this text goes to a helper site, not the photo.");
+    await ask(`From my photo:\n${text}\n\nMy question: `);
+  } catch (e) {
+    status.replaceChildren("Couldn't read the photo: " + e.message + ". You can type what's on it instead.");
+  }
+}
+$("#photo-input").addEventListener("change", (e) => { const f = e.target.files?.[0]; if (f) readPhoto(f); e.target.value = ""; });
+
+// ---- Shared from another app (Android share target -> /share -> ?title&text&url&photo) ----
 {
   const p = new URLSearchParams(location.search);
+  if (p.get("photo") === "1") {
+    caches.open("pocket-shared").then(async (c) => {
+      const res = await c.match("./shared-photo");
+      if (res) { await c.delete("./shared-photo"); readPhoto(await res.blob()); }
+    }).catch(() => {});
+  } else if (p.get("photo") === "missed") {
+    $("#shared").hidden = false;
+    $("#shared-text").textContent = "The photo didn't come through. Open Pocket Web once, then share it again, or tap 📷 Read a photo.";
+  }
   const parts = [p.get("title"), p.get("text"), p.get("url")].map((s) => (s || "").trim()).filter(Boolean);
   // Some apps put the link inside the text as well; don't repeat it.
   const unique = parts.filter((s, i) => !parts.some((o, j) => j !== i && o.length > s.length && o.includes(s)));

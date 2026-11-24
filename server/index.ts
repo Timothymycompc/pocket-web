@@ -166,6 +166,10 @@ export function createApp(store: DirectoryStore, getKey: () => string | undefine
     res.redirect(303, `/?${q.toString()}#ask`);
   });
 
+  // A photo share reaches the server only when the app's service worker isn't running yet. The photo
+  // is not kept here; the person is told to open the app once and share again.
+  app.post("/share", (_req, res) => { res.redirect(303, "/?photo=missed#ask"); });
+
   app.use(llmRoutes(getKey));
 
   app.use(express.static(WEB, {

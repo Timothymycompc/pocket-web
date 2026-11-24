@@ -21,7 +21,7 @@ export const DEFAULT_MODEL = process.env.POCKET_MODEL || "gemini-flash-lite-late
 const DAILY_CAP = Number(process.env.POCKET_DAILY_CAP || 1200); // whole site, default route only
 const HOURLY_PER_VISITOR = Number(process.env.POCKET_HOURLY_PER_VISITOR || 60);
 const MAX_OUTPUT_TOKENS = 2048;
-const MAX_BODY = "400kb";
+const MAX_BODY = "1mb"; // a shared photo, shrunk to 1024 px in the browser, fits
 export let RETRY_WAITS_MS = [2000, 5000, 10000];
 /** Test hook: shortens retry waits. */
 export function setRetryWaits(ms: number[]): void { RETRY_WAITS_MS = ms; }

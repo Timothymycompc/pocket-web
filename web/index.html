@@ -52,6 +52,11 @@
         <p id="shared-text" class="shared-text"></p>
         <p class="small dim">It's in the box below. Add what you want to know, then tap Send.</p>
       </div>
+      <div class="ask-tools">
+        <label class="photo-btn">📷 Read a photo<input id="photo-input" type="file" accept="image/*" hidden /></label>
+        <span class="small dim">The AI model reads the text on it. You check it before anything is sent.</span>
+      </div>
+      <div id="photo" class="photo" hidden></div>
       <div id="line" class="line" role="status" aria-live="polite" hidden></div>
       <div class="app-wrap"><div id="app">Loading the agent runtime…</div></div>
     </section>

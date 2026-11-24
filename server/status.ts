@@ -4,31 +4,29 @@
 // of its own sample questions through Pocket Web in a real phone-sized browser, and saves
 // the results to Cloud Storage. The server reads the latest file and marks each site.
 //
-// The rule (judge) is deliberately plain: a site "answered" only when the browser got a
-// non-empty reply, the hand-off to that site ran without an error, and the reply isn't
-// Pocket Web saying the site failed. Anything else is "didn't answer", with the reason.
+// The rule (judge) is deliberately plain: a site "answered" only when the hand-off to it ran
+// without an error and the app showed a non-empty answer in the site's own words. An answer
+// that says the site couldn't do something still counts as an answer: the site replied.
+// Anything else is "didn't answer", with the reason.
 
 export type CheckResult = {
   name: string; peerUrl: string; status: string; answer: string; seconds: number;
+  siteWords?: { site: string; text: string }[];
   spans?: { kind: string; tool?: string; error?: string; origin?: string }[];
 };
 export type CheckFile = { checkedAt: string; results: CheckResult[] };
 export type SiteCheck = { result: "answered" | "no-answer"; checkedAt: string; seconds: number; note: string };
 
-// Pocket Web's own words when a hand-off fails (server/directory.ts, rule 5) and the runtime's
-// error strings for a peer call.
-const FAILED = /returned no answer|returned an error|didn't answer|did not answer|declined|could not (reach|contact)|couldn't (reach|contact)|not available|unavailable|timed out|no site on the open agentic web list does this yet|^Error\b|Error from tool|Skipped /i;
-
 export function judge(r: CheckResult, toolName: string): { result: SiteCheck["result"]; note: string } {
-  if (r.status !== "answered") return { result: "no-answer", note: r.status === "timeout" ? "no reply within the time limit" : `the browser saw: ${r.status}` };
-  const answer = (r.answer || "").trim();
-  if (!answer) return { result: "no-answer", note: "the reply was empty" };
+  if (r.status === "timeout") return { result: "no-answer", note: "no reply within the time limit" };
+  if (r.status !== "answered") return { result: "no-answer", note: `the browser saw: ${r.status}` };
   const handoff = (r.spans || []).filter((s) => s.kind === "tool" && s.tool === toolName);
   if (!handoff.length) return { result: "no-answer", note: "Pocket Web didn't hand the question to this site" };
   const failed = handoff.find((s) => s.error);
   if (failed) return { result: "no-answer", note: `the hand-off failed: ${failed.error!.slice(0, 160)}` };
-  if (FAILED.test(answer)) return { result: "no-answer", note: `the reply said it failed: "${answer.slice(0, 160)}"` };
-  return { result: "answered", note: answer.slice(0, 240) };
+  const own = (r.siteWords || []).find((w) => w.site === r.name)?.text.trim() || "";
+  if (!own || own.startsWith("(The site sent back an empty answer.)")) return { result: "no-answer", note: "the site sent back an empty answer" };
+  return { result: "answered", note: own.slice(0, 240) };
 }
 
 export const STATUS_OBJECT = { bucket: process.env.POCKET_STATUS_BUCKET || "x300-506418-pulse-videos", name: "pocket-web/status/latest.json" };

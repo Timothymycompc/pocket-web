@@ -56,6 +56,9 @@ for (const s of sites) {
     r.answer = (answers[answers.length - 1] || "").trim();
     if (!r.status) r.status = r.answer ? "answered" : "no answer";
     r.actionStatus = await page.locator(".ns-action-status").innerText().catch(() => "");
+    // The helper site's own words, as the app shows them (web/app.js showSiteWords).
+    await page.waitForSelector(".site-words", { timeout: 3000 }).catch(() => {});
+    r.siteWords = await page.$$eval(".site-words", (els) => els.map((e) => ({ site: e.dataset.site, text: e.querySelector(".site-words-text")?.innerText || "" })));
     // The runtime's own trace (no secrets in spans): which agents, tools and peers ran, and their errors.
     r.spans = await page.evaluate(() => {
       const t = window.__nsweb?.trace;

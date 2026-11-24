@@ -70,6 +70,54 @@ async function ask(text, send = false) {
   }
 }
 
+// ---- The helper site's own words ---------------------------------------------------------
+// The guide model only routes. What a helper site answered is shown here word for word,
+// straight from the runtime's trace (agent_result of that site's front agent), so no model
+// can reword, soften or upgrade it. Only sites Pocket Web itself handed off to are shown
+// (a site that a helper consulted along the way stays inside that helper's answer).
+let sitesByTool = new Map();   // toolName -> site, filled from directory.json
+const ownHost = location.host;
+const turn = { called: new Set(), results: [] };
+
+function plain(md) {
+  return String(md || "")
+    .replace(/^#{1,6}\s*/gm, "")
+    .replace(/\*\*(.+?)\*\*/g, "$1")
+    .replace(/^\s*[-*]\s+/gm, "• ")
+    .trim();
+}
+
+function showSiteWords() {
+  const msgs = document.getElementById("ns-msgs");
+  if (!msgs) return;
+  for (const r of turn.results) {
+    if (!turn.called.has(r.site.toolName) || r.shown) continue;
+    r.shown = true;
+    const text = plain(r.text);
+    msgs.append(el("div", { class: "site-words", "data-site": r.site.name },
+      el("div", { class: "site-words-head" },
+        el("span", { class: "site-words-label" }, "Answer from ", el("b", {}, r.site.name)),
+        el("a", { href: r.site.site, target: "_blank", rel: "noopener" }, "Open site ↗")),
+      el("p", { class: "site-words-text" }, text || "(The site sent back an empty answer.)"),
+      el("p", { class: "site-words-foot" }, "These are the site's own words, shown unchanged. Built and run by ", r.site.team || "its own team", ".")));
+    msgs.scrollTop = msgs.scrollHeight;
+  }
+}
+
+function watchTrace(trace) {
+  trace.addEventListener("event", ({ detail: ev }) => {
+    if (ev.kind === "run" && ev.phase === "start") { turn.called.clear(); turn.results = []; }
+    if (ev.kind === "tool" && ev.phase === "start" && ev.origin === ownHost && sitesByTool.has(ev.tool)) turn.called.add(ev.tool);
+    if (ev.kind === "agent_result" && ev.origin !== ownHost) {
+      for (const site of sitesByTool.values()) {
+        if (site.frontMan === ev.agent && site.network === ev.network && new URL(site.peerUrl).host === ev.origin) turn.results.push({ site, text: ev.text });
+      }
+    }
+    if (ev.kind === "run" && ev.phase === "end") setTimeout(showSiteWords, 50);
+  });
+}
+startRuntime().then((rt) => rt?.trace && watchTrace(rt.trace)).catch(() => {});
+
 // ---- Directory ----------------------------------------------------------------------
 function dayWord(iso) {
   const d = new Date(iso), now = new Date();
@@ -104,6 +152,7 @@ async function loadDirectory() {
     if (!r.ok) throw new Error("HTTP " + r.status);
     const d = await r.json();
     const sites = d.sites || [];
+    sitesByTool = new Map(sites.filter((x) => x.loadable).map((x) => [x.toolName, x]));
     const ok = sites.filter((s) => s.loadable);
     const everyday = ok.filter((s) => s.category === "everyday");
     const builders = ok.filter((s) => s.category === "builders");

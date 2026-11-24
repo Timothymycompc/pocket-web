@@ -13,7 +13,7 @@ only if it passes the live browser test.
 
 Pocket Web is an app for your phone. It knows every agent website on the open
 agentic web's public list, built by many different people. When you share
-something with it (a link or some text), it picks the helper
+something with it (a photo, a link or some text), it picks the helper
 site that fits, asks your OK, and runs that site's agents right on your phone.
 
 - **Nobody owns the list.** Anyone who publishes an agent site and gets listed shows up
@@ -48,12 +48,22 @@ helper says it doesn't know, it means it: nobody filled the gap with a guess.
 
 1. **Install it.** Open the Pocket Web page in Chrome and tap *Install app*. It now
    appears in your phone's Share menu.
-2. **Share something.** In any app (Messages, Gmail, Chrome), tap *Share*,
+2. **Share something.** In any app (Photos, Messages, Gmail, Chrome), tap *Share*,
    then *Pocket Web*. Or open Pocket Web and type a question.
 3. **Approve the helper.** Pocket Web shows which site it picked and why. Tap
    *Allow* and the answer appears, with where it came from. If the answer suggests
    an action (add to calendar, draft a text, open a map), you confirm it first.
    Nothing is sent for you.
+
+**Photos.** A shared photo stays on your phone until you tap to read it. The AI model then
+copies the printed text (brand, model number, dates) into the message box. You check it and
+add your question. Helper sites only get the text you send, never the photo.
+
+**Personal details.** If your message has an email, phone number, card number or SSN,
+Pocket Web stops before sending and offers to remove it.
+
+**Whose answer is it?** The answer card shows the helper site's own words, unchanged, with
+its name. Pocket Web's AI only picks the site; it never rewrites what the site said.
 
 **Which AI does the thinking?** A free model works out of the box, with a fair daily
 limit. You can switch to your own AI key in Settings; it stays on your phone and

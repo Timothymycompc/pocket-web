@@ -30,12 +30,24 @@ all of them in your pocket, and every newly listed site joins automatically.
   (`/pocket_web.network.json`): a front agent, `pocket_guide`, whose tools are the
   listed sites' network URLs. It picks one site, says which and why, hands over the
   request in full, and answers with that site's words and name. If nothing fits, it says so.
-- **Peers run in your browser.** The reference runtime
-  ([nsDeploy](https://github.com/cognizant-ai-lab/nsdeploy), vendored in `web/runtime`)
+- **Peers run in your browser.** The challenge's runtime (nsDeploy, agentify-website edition,
+  vendored unchanged in `web/runtime`, see its CHANGES.md)
   asks before contacting each site, then loads its network and runs it locally on the
   model you chose. Your key never goes to the peer.
-- **Phone app.** A PWA with an Android share target: *Share → Pocket Web* in any app
-  opens the request ready to send.
+- **The site's own words.** The answer shown is the helper site's own text, taken from the
+  runtime's trace (`agent_result` of that site's front agent) and never rewritten by a model.
+  The guide model only routes. (It once turned Recalled?'s "possible match" into "yes, recalled".)
+- **Right site, or none.** For shared text with no question, vague requests or no fit, the guide
+  contacts no site and says so. Measured in a real browser: `tests/browser/routing-check.mjs`.
+- **Phone app.** A PWA with an Android share target: *Share → Pocket Web* in any app opens the
+  request ready to send. A shared photo stays on the phone until the person asks for it to be
+  read; the site's model copies its printed text into the message box for the person to check.
+  Helper sites only get the text the person sends.
+- **Privacy guard.** Before Send, plain code ([web/privacy.js](web/privacy.js)) finds emails, phone
+  numbers, card numbers (Luhn-checked) and SSNs, and offers *Remove and send*.
+- **Daily live check.** A Cloud Run job (`jobs/peer-check`, 5:00 AM Dallas) asks every listed site one
+  of its own sample questions through Pocket Web in a real phone-sized browser. Each helper shows
+  *Answered today* or *Didn't answer today* with the reason ([server/status.ts](server/status.ts)).
 - **Inference.** A free default model (Gemini, publisher-funded, capped per visitor and
   per day, with a visible queue) so it works with no setup; or bring your own key in
   settings (stored in your browser, sent only to your router).
@@ -49,8 +61,14 @@ npm run dev         # http://localhost:8080 (free model needs GEMINI_API_KEY)
 node scripts/load-check.mjs http://localhost:8080   # runtime loads + validates the network
 ```
 
-`scripts/peer-test.mjs` asks every listed site one of its own sample questions through
-the runtime. `scripts/record-fixture.ts` re-records the test fixture.
+Real-browser checks run in Cloud Build (never on a phone):
+
+```sh
+gcloud builds submit --project x300-506418 --config tests/browser/cloudbuild.yaml \
+  --substitutions _SCRIPT=routing-check.mjs tests/browser     # or peer-check / privacy-check / photo-check / screens
+```
+
+`scripts/record-fixture.ts` re-records the test fixture. `scripts/deploy-job.sh` deploys the daily check.
 
 ## Deploy
 

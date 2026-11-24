@@ -108,3 +108,41 @@ test("per-visitor hourly limit and reset", () => {
   assert.equal(admit("visitor-a", new Date("2026-11-16T11:00:00Z")), null, "resets next hour");
 });
 
+
+test("daily quota used up: the paid backup answers, and the free route is skipped for the rest of the day", async () => {
+  const { resetQuota, quotaStatus } = await import("../server/llm.ts");
+  resetQuota(); resetLimits(); setRetryWaits([1, 1, 1]);
+  const seen: string[] = [];
+  const fake = (async (url: any, init: any) => {
+    seen.push(`${String(url).includes("aiplatform") ? "backup" : "free"} ${init.headers.authorization} ${JSON.parse(init.body).model}`);
+    if (!String(url).includes("aiplatform")) return new Response(JSON.stringify([{ error: { code: 429, message: "Quota exceeded for metric generate_content_free_tier_requests, quotaId: GenerateRequestsPerDayPerProjectPerModel-FreeTier" } }]), { status: 429 });
+    return new Response(JSON.stringify({ choices: [{ message: { content: "ok" } }] }), { headers: { "content-type": "application/json" } });
+  }) as typeof fetch;
+  const backup = { url: "https://aiplatform.googleapis.com/v1/projects/p/locations/global/endpoints/openapi/chat/completions", model: "google/gemini-3.5-flash-lite", token: async () => "SA-TOKEN" };
+  const app = express();
+  app.use(llmRoutes(() => "FREE-KEY-123", fake, undefined, backup));
+  const { base, close } = await listen(app);
+  try {
+    const body = JSON.stringify({ messages: [{ role: "user", content: "hi" }] });
+    const a = await fetch(`${base}/llm/v1/chat/completions`, { method: "POST", headers: { "content-type": "application/json" }, body });
+    assert.equal(a.status, 200);
+    assert.deepEqual(seen, ["free Bearer FREE-KEY-123 " + DEFAULT_MODEL, "backup Bearer SA-TOKEN google/gemini-3.5-flash-lite"], "no retries on a daily quota; backup uses the service identity, not the key");
+    const b = await fetch(`${base}/llm/v1/chat/completions`, { method: "POST", headers: { "content-type": "application/json" }, body });
+    assert.equal(b.status, 200);
+    assert.equal(seen.length, 3);
+    assert.match(seen[2], /^backup/, "free route skipped for the rest of the day");
+    assert.deepEqual(quotaStatus(), { free_quota_out_today: true, backup_calls_today: 2 });
+  } finally { close(); resetQuota(); setRetryWaits([2000, 5000, 10000]); }
+});
+
+test("the backup never serves BYOK requests: a visitor's own key goes only to their provider", async () => {
+  const seen: string[] = [];
+  const fake = (async (url: any) => { seen.push(String(url)); return new Response(JSON.stringify({ choices: [{ message: { content: "ok" } }] }), { headers: { "content-type": "application/json" } }); }) as typeof fetch;
+  const app = express();
+  app.use(llmRoutes(() => "FREE-KEY-123", fake, undefined, { url: "https://aiplatform.googleapis.com/x", model: "m", token: async () => "SA" }));
+  const { base, close } = await listen(app);
+  try {
+    await fetch(`${base}/byok/v1/chat/completions`, { method: "POST", headers: { "content-type": "application/json", authorization: "Bearer VISITOR-KEY-456" }, body: JSON.stringify({ messages: [{ role: "user", content: "hi" }] }) });
+    assert.ok(seen.every((u) => !u.includes("aiplatform")));
+  } finally { close(); }
+});

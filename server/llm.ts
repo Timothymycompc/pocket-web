@@ -16,6 +16,37 @@ import { Readable } from "node:stream";
 import { ModelQueue } from "./queue.js";
 
 export const GEMINI_OPENAI = "https://generativelanguage.googleapis.com/v1beta/openai";
+
+// Paid backup for the free route (Tim's choice, 2026-11-24): when Google's free daily quota is used
+// up, the same capped requests go to Vertex AI on the site's own Google Cloud project, billed to it,
+// using the service's own identity (no key). Off unless POCKET_VERTEX_PROJECT is set.
+export type Backup = { url: string; model: string; token: () => Promise<string> };
+export function vertexBackup(project = process.env.POCKET_VERTEX_PROJECT, model = process.env.POCKET_VERTEX_MODEL || "google/gemini-3.5-flash-lite"): Backup | null {
+  if (!project) return null;
+  let cached = { token: "", until: 0 };
+  return {
+    url: `https://aiplatform.googleapis.com/v1/projects/${project}/locations/global/endpoints/openapi/chat/completions`,
+    model,
+    token: async () => {
+      if (cached.token && Date.now() < cached.until) return cached.token;
+      const r = await fetch("http://metadata.google.internal/computeMetadata/v1/instance/service-accounts/default/token", { headers: { "Metadata-Flavor": "Google" } });
+      const j = await r.json() as { access_token: string; expires_in: number };
+      cached = { token: j.access_token, until: Date.now() + Math.max(60, j.expires_in - 120) * 1000 };
+      return cached.token;
+    },
+  };
+}
+
+// Google's free quota resets at midnight Pacific time. After a daily refusal, skip the free route
+// until then, so visitors don't wait through its retries on every call.
+const pacificDay = (d = new Date()) => d.toLocaleDateString("en-CA", { timeZone: "America/Los_Angeles" });
+let freeOutDay = "";
+let backupDay = "", backupCalls = 0;
+export function quotaStatus(now = new Date()): { free_quota_out_today: boolean; backup_calls_today: number } {
+  return { free_quota_out_today: freeOutDay === pacificDay(now), backup_calls_today: backupDay === pacificDay(now) ? backupCalls : 0 };
+}
+/** Test hook. */
+export function resetQuota(): void { freeOutDay = ""; backupDay = ""; backupCalls = 0; }
 export const DEFAULT_MODEL = process.env.POCKET_MODEL || "gemini-flash-lite-latest";
 
 const DAILY_CAP = Number(process.env.POCKET_DAILY_CAP || 1200); // whole site, default route only
@@ -98,13 +129,13 @@ export function cleanBody(body: any, forceModel?: string): Record<string, unknow
   return out;
 }
 
-export function llmRoutes(getKey: () => string | undefined, fetchImpl: typeof fetch = fetch, queue = new ModelQueue()): Router {
+export function llmRoutes(getKey: () => string | undefined, fetchImpl: typeof fetch = fetch, queue = new ModelQueue(), backup: Backup | null = vertexBackup()): Router {
   const r = express.Router();
   r.use(express.json({ limit: MAX_BODY }));
 
   r.post("/llm/v1/chat/completions", async (req: Request, res: Response) => {
     const key = getKey();
-    if (!key) return refuse(res, 503, "The site's free model is not configured right now. Add your own key in AI model settings.");
+    if (!key && !backup) return refuse(res, 503, "The site's free model is not configured right now. Add your own key in AI model settings.");
     const body = cleanBody(req.body, DEFAULT_MODEL);
     if (!body) return refuse(res, 400, "Expected an OpenAI-style chat request with messages.");
     const why = admit(req.ip || req.socket.remoteAddress || "unknown");
@@ -119,6 +150,15 @@ export function llmRoutes(getKey: () => string | undefined, fetchImpl: typeof fe
         headers: { "content-type": "application/json", authorization: `Bearer ${key}` },
         body: JSON.stringify({ ...body, messages }),
       });
+      const sendBackup = async () => {
+        if (pacificDay() !== backupDay) { backupDay = pacificDay(); backupCalls = 0; }
+        backupCalls += 1;
+        return fetchImpl(backup!.url, {
+          method: "POST",
+          headers: { "content-type": "application/json", authorization: `Bearer ${await backup!.token()}` },
+          body: JSON.stringify({ ...body, model: backup!.model }),
+        });
+      };
       // The free tier allows only a few requests per minute, and the model is sometimes
       // briefly overloaded (503). Wait and retry before giving up, so a busy moment
       // doesn't break an answer.
@@ -126,6 +166,8 @@ export function llmRoutes(getKey: () => string | undefined, fetchImpl: typeof fe
         let upstream = await send(messages);
         for (const wait of RETRY_WAITS_MS) {
           if (upstream.status !== 429 && upstream.status !== 503) break;
+          const peek = upstream.status === 429 ? await upstream.clone().text().catch(() => "") : "";
+          if (/PerDay|per day|daily/i.test(peek)) break; // a daily quota won't clear by waiting
           await upstream.body?.cancel().catch(() => {});
           await new Promise((r) => setTimeout(r, wait));
           upstream = await send(messages);
@@ -133,15 +175,29 @@ export function llmRoutes(getKey: () => string | undefined, fetchImpl: typeof fe
         return upstream;
       };
       const messages = body.messages as unknown[];
-      const upstream = await sendWithRetry(messages);
-      if (upstream.status === 429 || upstream.status === 503) {
+      const freeOut = freeOutDay === pacificDay() || !key;
+      let upstream = freeOut ? null : await sendWithRetry(messages);
+      if (upstream && (upstream.status === 429 || upstream.status === 503)) {
         // Google says which limit was hit. A daily quota needs a different message than a busy minute.
         const why = await upstream.text().catch(() => "");
         const daily = upstream.status === 429 && /PerDay|per day|daily/i.test(why);
         console.warn(`Free model refused: HTTP ${upstream.status}${daily ? " (daily quota)" : ""}: ${why.replace(/\s+/g, " ").slice(0, 300)}`);
-        return refuse(res, 429, daily
-          ? "The free model has used up today's free quota. Add your own key in AI model settings (the gear icon), or try again tomorrow."
-          : "The free model is busy right now. Try again in a minute, or add your own key in AI model settings (the gear icon).");
+        if (daily) freeOutDay = pacificDay();
+        if (!backup) {
+          return refuse(res, 429, daily
+            ? "The free model has used up today's free quota. Add your own key in AI model settings (the gear icon), or try again tomorrow."
+            : "The free model is busy right now. Try again in a minute, or add your own key in AI model settings (the gear icon).");
+        }
+        upstream = null;
+      }
+      if (!upstream) {
+        if (!backup) return refuse(res, 429, "The free model has used up today's free quota. Add your own key in AI model settings (the gear icon), or try again tomorrow.");
+        upstream = await sendBackup();
+        if (!upstream.ok) console.warn(`Backup model refused: HTTP ${upstream.status}: ${(await upstream.clone().text().catch(() => "")).replace(/\s+/g, " ").slice(0, 300)}`);
+        if (upstream.status === 429 || upstream.status === 503) {
+          await upstream.body?.cancel().catch(() => {});
+          return refuse(res, 429, "The model is busy right now. Try again in a minute, or add your own key in AI model settings (the gear icon).");
+        }
       }
       await relay(upstream, res);
     } catch {

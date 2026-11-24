@@ -9,7 +9,7 @@ import express from "express";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { loadSecrets } from "./secrets.js";
-import { llmRoutes, DEFAULT_MODEL } from "./llm.js";
+import { llmRoutes, DEFAULT_MODEL, quotaStatus } from "./llm.js";
 import { buildDirectory, pocketNetwork, attachChecks, POCKET_NETWORK, LIST_URL, liveFetch, type Directory } from "./directory.js";
 import { readLatestCheck } from "./status.js";
 
@@ -124,7 +124,7 @@ export function createApp(store: DirectoryStore, getKey: () => string | undefine
 
   app.get("/health", (_req, res) => {
     const d = store.get();
-    res.json({ ok: !!d, model_key: !!getKey(), directory_updated: d?.updatedAt || null, sites: d?.sites.length || 0 });
+    res.json({ ok: !!d, model_key: !!getKey(), backup_model: !!process.env.POCKET_VERTEX_PROJECT, ...quotaStatus(), directory_updated: d?.updatedAt || null, sites: d?.sites.length || 0 });
   });
 
   // Waits for the first directory read after a cold start, so the first visitor never gets an empty list.

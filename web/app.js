@@ -50,7 +50,8 @@ async function ask(text, send = false) {
   await startRuntime().catch(() => {});
   const input = $("#ns-input");
   if (!input) return;
-  input.value = text;
+  // The runtime's message box is one line: keep line breaks readable as " · ".
+  input.value = String(text).split(/\n+/).map((l) => l.trim()).filter(Boolean).join(" · ").replace(/: · /g, ": ").replace(/ · My question:$/, " · My question: ");
   input.dispatchEvent(new Event("input", { bubbles: true }));
   input.focus();
   if (send) $("#ns-send")?.click();
@@ -133,7 +134,7 @@ async function readPhoto(blob) {
     const text = String(body?.choices?.[0]?.message?.content || "").trim();
     if (!text) throw new Error("the model sent back no text");
     status.replaceChildren(el("b", {}, "Read from your photo. "), "Check it, add your question, then Send. Only this text goes to a helper site, not the photo.");
-    await ask(`From my photo:\n${text}\n\nMy question: `);
+    await ask(`From my photo:\n${text}\nMy question:`);
   } catch (e) {
     status.replaceChildren("Couldn't read the photo: " + e.message + ". You can type what's on it instead.");
   }

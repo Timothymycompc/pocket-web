@@ -191,6 +191,7 @@ export function pocketNetwork(dir: Directory, model: string): Record<string, unk
     "6. If no listed site fits, say: \"No site on the open agentic web list does this yet.\" Then name the closest one if any. Do not answer the question yourself from general knowledge.",
     "7. If the person asks what Pocket Web is or what it can do, explain briefly and list a few everyday sites with one example each.",
     "8. Never ask for passwords, card numbers, seed phrases or private keys. If someone shares one, tell them not to, and do not pass it on.",
+    "9. If someone describes a medical emergency, danger to someone's life, or thoughts of suicide or self-harm, contact no site. Tell them plainly to call their local emergency number now (911 in the US), or for suicide or crisis in the US to call or text 988. Keep it short and kind.",
     "",
     `The listed sites (from the public list, read ${dir.updatedAt.slice(0, 10)}):`,
     ...sites.map(helperLine),

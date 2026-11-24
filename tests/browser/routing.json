@@ -1,8 +1,106 @@
 [
-  { "q": "They didn't know they were keeping me when I got here but I did.......", "expect": [], "why": "a personal post shared with no question (Tim's real share, 2026-11-23)" },
-  { "q": "What's the weather in Dallas tomorrow?", "expect": [], "why": "no listed site does weather" },
-  { "q": "Was the Graco Quattro Tour stroller recalled?", "expect": ["recalled_recall_check"], "why": "baby gear recall" },
-  { "q": "What hackathons can I still enter in the next month?", "expect": ["deadline_desk"], "why": "open contests" },
-  { "q": "Can you explain this letter in plain words? 'Your account is past due. A late fee of $25 will be added if payment of $140.18 is not received by December 1.'", "expect": ["plainly_agent_plainly_document_helper"], "why": "a confusing bill" },
-  { "q": "lol", "expect": [], "why": "too vague" }
+ {
+  "q": "They didn't know they were keeping me when I got here but I did.......",
+  "expect": [],
+  "why": "a personal post shared with no question (Tim's real share, 2026-11-23)"
+ },
+ {
+  "q": "What's the weather in Dallas tomorrow?",
+  "expect": [],
+  "why": "no listed site does weather"
+ },
+ {
+  "q": "Was the Graco Quattro Tour stroller recalled?",
+  "expect": [
+   "recalled_recall_check"
+  ],
+  "why": "baby gear recall"
+ },
+ {
+  "q": "What hackathons can I still enter in the next month?",
+  "expect": [
+   "deadline_desk"
+  ],
+  "why": "open contests"
+ },
+ {
+  "q": "Can you explain this letter in plain words? 'Your account is past due. A late fee of $25 will be added if payment of $140.18 is not received by December 1.'",
+  "expect": [
+   "plainly_agent_plainly_document_helper"
+  ],
+  "why": "a confusing bill"
+ },
+ {
+  "q": "lol",
+  "expect": [],
+  "why": "too vague"
+ },
+ {
+  "q": "Is this person free on Thursday at 3pm Stockholm time for a 30 minute call?",
+  "expect": [
+   "overlap_pass"
+  ],
+  "why": "meeting time across companies"
+ },
+ {
+  "q": "I have 8 free hours a week. Can I finish a hackathon entry due in a month?",
+  "expect": [
+   "spare_hours"
+  ],
+  "why": "does a contest fit my week"
+ },
+ {
+  "q": "Please simplify this paragraph so a 12-year-old can follow it: The municipality hereby notifies residents that water service will be interrupted for maintenance.",
+  "expect": [
+   "bacajelas",
+   "plainly_agent_plainly_document_helper"
+  ],
+  "why": "plain-words rewrite; either reading helper fits",
+  "any": true
+ },
+ {
+  "q": "What is the escrow track record of XRPL key rGJsjkfmASA2ezXYDpTQJZDp9tRgCJAPhw on testnet?",
+  "expect": [
+   "trois_nombres_three_numbers"
+  ],
+  "why": "XRPL key record"
+ },
+ {
+  "q": "Which AI models prefer citing pages written by their own developer?",
+  "expect": [
+   "citation_mirror"
+  ],
+  "why": "AI citation bias index"
+ },
+ {
+  "q": "How ready is https://example.com for AI agents?",
+  "expect": [
+   "retrofit_guide"
+  ],
+  "why": "site agent-readiness score"
+ },
+ {
+  "q": "Find me an agentic website that books boat tours",
+  "expect": [
+   "agent_atlas"
+  ],
+  "why": "directory search for agent sites"
+ },
+ {
+  "q": "I have chest pain and my left arm feels numb, what should I do?",
+  "expect": [],
+  "why": "medical emergency: no site, tell them to call emergency services"
+ },
+ {
+  "q": "Write me a poem about the ocean",
+  "expect": [],
+  "why": "no listed site writes poems"
+ },
+ {
+  "q": "Translate 'good morning' into Indonesian",
+  "expect": [
+   "bacajelas"
+  ],
+  "why": "Indonesian-English reading companion"
+ }
 ]

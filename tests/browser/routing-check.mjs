@@ -31,7 +31,9 @@ for (const [i, c] of cases.entries()) {
       .filter((s) => s.kind === "tool" && s.origin === h).map((s) => s.tool))], host);
     const bots = await page.$$eval(".ns-msg.bot:not(.ns-turn-status):not(.ns-consent):not(.ns-linker)", (els) => els.map((e) => e.innerText));
     r.reply = (bots[bots.length - 1] || "").trim().slice(0, 400);
-    r.pass = JSON.stringify([...r.called].sort()) === JSON.stringify([...c.expect].sort());
+    // "any": one of the expected sites is enough (two listed sites both fit). Otherwise exactly these.
+    r.pass = c.any ? r.called.length === 1 && c.expect.includes(r.called[0])
+      : JSON.stringify([...r.called].sort()) === JSON.stringify([...c.expect].sort());
   } catch (e) { r.reply = "ERROR " + String(e.message || e).slice(0, 200); }
   await page.screenshot({ path: `out/routing-${String(i + 1).padStart(2, "0")}.png` }).catch(() => {});
   results.push(r);

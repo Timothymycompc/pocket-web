@@ -109,13 +109,12 @@ test("per-visitor hourly limit and reset", () => {
 });
 
 
-test("daily quota used up: the paid backup answers, and the free route is skipped for the rest of the day", async () => {
+test("paid model set: visitors' messages never reach the free tier (Gemini free-tier terms)", async () => {
   const { resetQuota, quotaStatus } = await import("../server/llm.ts");
   resetQuota(); resetLimits(); setRetryWaits([1, 1, 1]);
   const seen: string[] = [];
   const fake = (async (url: any, init: any) => {
-    seen.push(`${String(url).includes("aiplatform") ? "backup" : "free"} ${init.headers.authorization} ${JSON.parse(init.body).model}`);
-    if (!String(url).includes("aiplatform")) return new Response(JSON.stringify([{ error: { code: 429, message: "Quota exceeded for metric generate_content_free_tier_requests, quotaId: GenerateRequestsPerDayPerProjectPerModel-FreeTier" } }]), { status: 429 });
+    seen.push(`${String(url).includes("aiplatform") ? "paid" : "free"} ${init.headers.authorization} ${JSON.parse(init.body).model}`);
     return new Response(JSON.stringify({ choices: [{ message: { content: "ok" } }] }), { headers: { "content-type": "application/json" } });
   }) as typeof fetch;
   const backup = { url: "https://aiplatform.googleapis.com/v1/projects/p/locations/global/endpoints/openapi/chat/completions", model: "google/gemini-3.5-flash-lite", token: async () => "SA-TOKEN" };
@@ -124,14 +123,31 @@ test("daily quota used up: the paid backup answers, and the free route is skippe
   const { base, close } = await listen(app);
   try {
     const body = JSON.stringify({ messages: [{ role: "user", content: "hi" }] });
-    const a = await fetch(`${base}/llm/v1/chat/completions`, { method: "POST", headers: { "content-type": "application/json" }, body });
-    assert.equal(a.status, 200);
-    assert.deepEqual(seen, ["free Bearer FREE-KEY-123 " + DEFAULT_MODEL, "backup Bearer SA-TOKEN google/gemini-3.5-flash-lite"], "no retries on a daily quota; backup uses the service identity, not the key");
-    const b = await fetch(`${base}/llm/v1/chat/completions`, { method: "POST", headers: { "content-type": "application/json" }, body });
-    assert.equal(b.status, 200);
-    assert.equal(seen.length, 3);
-    assert.match(seen[2], /^backup/, "free route skipped for the rest of the day");
-    assert.deepEqual(quotaStatus(), { free_quota_out_today: true, backup_calls_today: 2 });
+    for (let i = 0; i < 2; i++) {
+      const r = await fetch(`${base}/llm/v1/chat/completions`, { method: "POST", headers: { "content-type": "application/json" }, body });
+      assert.equal(r.status, 200);
+    }
+    assert.deepEqual(seen, ["paid Bearer SA-TOKEN google/gemini-3.5-flash-lite", "paid Bearer SA-TOKEN google/gemini-3.5-flash-lite"], "free key never used; paid model uses the service identity");
+    assert.deepEqual(quotaStatus(), { free_quota_out_today: false, backup_calls_today: 2 });
+  } finally { close(); resetQuota(); setRetryWaits([2000, 5000, 10000]); }
+});
+
+test("no paid model (local development): the free key is used, and a used-up daily quota is reported clearly", async () => {
+  resetLimits(); setRetryWaits([1, 1, 1]);
+  const { resetQuota } = await import("../server/llm.ts");
+  resetQuota();
+  const seen: string[] = [];
+  const fake = (async (url: any, init: any) => {
+    seen.push(`${init.headers.authorization}`);
+    return new Response(JSON.stringify([{ error: { code: 429, message: "quotaId: GenerateRequestsPerDayPerProjectPerModel-FreeTier" } }]), { status: 429 });
+  }) as typeof fetch;
+  const app = express();
+  app.use(llmRoutes(() => "FREE-KEY-123", fake, undefined, null));
+  const { base, close } = await listen(app);
+  try {
+    const r = await fetch(`${base}/llm/v1/chat/completions`, { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ messages: [{ role: "user", content: "hi" }] }) });
+    assert.equal(r.status, 429);
+    assert.deepEqual(seen, ["Bearer FREE-KEY-123"], "no retries on a daily quota");
   } finally { close(); resetQuota(); setRetryWaits([2000, 5000, 10000]); }
 });
 

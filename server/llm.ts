@@ -1,8 +1,11 @@
 // llm.ts — the two model routes the browser runtime can use (adapted from Pulse Safety Desk).
 //
-// /llm/v1  = the site's default inference (publisher-funded). The server adds its own
-//            Gemini key, forces one cheap model and caps request size and daily volume,
-//            so a visitor can use Pocket Web without any key of their own.
+// /llm/v1  = the site's default inference (publisher-funded). On the live site it goes to
+//            PAID Vertex AI on the site's own Google Cloud project (2026-11-25): Google's
+//            free Gemini tier may use prompts for training and human review, must not get
+//            personal information, and may not serve users in the EEA, UK or Switzerland.
+//            The free key is only a fallback for local development with no Vertex project.
+//            One cheap model, capped request size and daily volume.
 // /byok/v1 = Bring Your Own Key. Forwards exactly the visitor's Authorization header
 //            to Gemini and never adds the server key (spec section 4, "caller-site BYOK proxy").
 //
@@ -17,9 +20,9 @@ import { ModelQueue } from "./queue.js";
 
 export const GEMINI_OPENAI = "https://generativelanguage.googleapis.com/v1beta/openai";
 
-// Paid backup for the free route (Tim's choice, 2026-11-24): when Google's free daily quota is used
-// up, the same capped requests go to Vertex AI on the site's own Google Cloud project, billed to it,
-// using the service's own identity (no key). Off unless POCKET_VERTEX_PROJECT is set.
+// Paid model for the free route: Vertex AI on the site's own Google Cloud project, billed to it,
+// using the service's own identity (no key). When POCKET_VERTEX_PROJECT is set (the live site),
+// every default-route request goes here and the free-tier key is never used.
 export type Backup = { url: string; model: string; token: () => Promise<string> };
 export function vertexBackup(project = process.env.POCKET_VERTEX_PROJECT, model = process.env.POCKET_VERTEX_MODEL || "google/gemini-3.5-flash-lite"): Backup | null {
   if (!project) return null;
@@ -175,7 +178,8 @@ export function llmRoutes(getKey: () => string | undefined, fetchImpl: typeof fe
         return upstream;
       };
       const messages = body.messages as unknown[];
-      const freeOut = freeOutDay === pacificDay() || !key;
+      // Paid model configured: never send visitors' messages to the free tier.
+      const freeOut = !!backup || freeOutDay === pacificDay() || !key;
       let upstream = freeOut ? null : await sendWithRetry(messages);
       if (upstream && (upstream.status === 429 || upstream.status === 503)) {
         // Google says which limit was hit. A daily quota needs a different message than a busy minute.
